@@ -1,0 +1,26 @@
+NIGHTFLIX SHORTS SETUP
+
+1) Upload shorts.html and shorts.json beside index.html and movies.json.
+2) Add one object per licensed short clip to shorts.json, for example:
+
+[
+  {
+    "movieId": 182,
+    "title": "Scene (Telugu)",
+    "video": "https://your-cdn.example/scene-short.mp4",
+    "caption": "Watch the full title on NIGHTFLIX",
+    "poster": "https://your-cdn.example/poster.jpg"
+  }
+]
+
+movieId must exactly match the id of the related entry in movies.json.
+video must be a direct, browser-playable video URL (prefer MP4/H.264). Use only clips you own or are licensed to publish.
+
+GESTURES
+- Swipe DOWN: next short (as requested).
+- Swipe UP: previous short.
+- Swipe LEFT: open the related title at movie.html?id=MOVIE_ID.
+- Tap Movie button: open related title.
+- Sound button: toggle audio.
+
+Note: The existing project uses movie.html?id=... for movie detail pages (not movies.html).

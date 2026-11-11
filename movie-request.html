@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>NIGHTFLIX — Movie Request</title> <style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;
+  font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
+  color:#f2f5f9;
+  background:#07090d;
+  padding:30px 15px;
+}
+.container{width:min(760px,100%);margin:auto}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
+.logo{font-size:24px;font-weight:900;letter-spacing:1px}
+.logo span{color:#e50914}
+.back{color:#cdd4df;text-decoration:none;border:1px solid #293241;background:#10151e;padding:10px 14px;border-radius:9px}
+.card{background:#10151e;border:1px solid #222b38;border-radius:16px;padding:26px;box-shadow:0 18px 50px rgba(0,0,0,.3)}
+h1{font-size:30px;margin-bottom:8px}
+p{color:#8994a6;line-height:1.5;margin-bottom:22px}
+label{display:block;font-size:13px;font-weight:700;margin:15px 0 7px}
+input,select,textarea{
+  width:100%;background:#0b0f16;color:#fff;border:1px solid #293241;
+  border-radius:10px;padding:12px;outline:none
+}
+textarea{min-height:130px;resize:vertical}
+button{
+  margin-top:20px;width:100%;padding:13px;border:0;border-radius:10px;
+  background:#e50914;color:#fff;font-weight:800;cursor:pointer
+}
+button:hover{background:#ff2633}
+.note{font-size:12px;color:#697486;margin-top:12px}
+#result{display:none;margin-top:18px;padding:14px;border:1px solid #293241;border-radius:10px;color:#cdd4df}
+</style> </head><body><div class="container"><header><a class="logo" href="index.html">NIGHT<span>FLIX</span></a><a class="back" href="index.html">← Back</a></header><div class="card"><h1>Movie Request</h1><p>Tell us which movie or web series you want to see on NIGHTFLIX.</p><form id="requestForm"><label for="title">Movie / Series Name *</label><input id="title" required placeholder="e.g. Leo"><label for="type">Type</label><select id="type"><option>Movie</option><option>Web Series</option><option>TV Show</option></select><label for="year">Year (optional)</label><input id="year" inputmode="numeric" placeholder="2026"><label for="message">Extra details (optional)</label> <textarea id="message" placeholder="Language, season/episode, etc."></textarea> <button type="submit">Send Movie Request</button></form><div class="note"> The request opens your device's email app. Set your receiving email in this page's JavaScript before publishing. </div><div id="result"></div></div></div> <script>
+"use strict";
+
+/* CHANGE THIS ONCE BEFORE PUBLISHING */
+const REQUEST_EMAIL = "YOUR_EMAIL_HERE@example.com";
+
+document.getElementById("requestForm").addEventListener("submit", function(event){
+  event.preventDefault();
+
+  const title = document.getElementById("title").value.trim();
+  const type = document.getElementById("type").value;
+  const year = document.getElementById("year").value.trim();
+  const message = document.getElementById("message").value.trim();
+
+  const subject = `NIGHTFLIX Movie Request - ${title}`;
+  const body =
+`Movie / Series: ${title}
+Type: ${type}
+Year: ${year || "Not specified"}
+
+Extra details:
+${message || "None"}`;
+
+  if(REQUEST_EMAIL.includes("YOUR_EMAIL_HERE")){
+    const result = document.getElementById("result");
+    result.style.display = "block";
+    result.textContent =
+      "Request ready. Add your receiving email in REQUEST_EMAIL in movie-request.html, then publish the site.";
+    return;
+  }
+
+  window.location.href =
+    `mailto:${encodeURIComponent(REQUEST_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+});
+</script> </body></html>

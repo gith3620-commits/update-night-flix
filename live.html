@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#07090d">
+
+<title>NIGHTFLIX — LIVE TV</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+:root{
+  --bg:#07090d;
+  --text:#f2f5f9;
+  --muted:#8994a6;
+  --line:#202936;
+  --accent:#e50914;
+}
+
+body{
+  font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
+  color:var(--text);
+  background:var(--bg);
+  min-height:100vh;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+.container{
+  width:min(1440px,100%);
+  margin:auto;
+  padding:0 24px;
+}
+
+/* HEADER */
+
+header{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:rgba(7,9,13,.82);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.nav{
+  height:72px;
+  display:flex;
+  align-items:center;
+  gap:24px;
+}
+
+.logo{
+  font-size:25px;
+  font-weight:950;
+  letter-spacing:1.5px;
+}
+
+.logo span{
+  color:var(--accent);
+}
+
+.back{
+  font-size:14px;
+  color:#aab3c2;
+  padding:6px 12px;
+  border-radius:6px;
+  outline:none;
+}
+
+.back:hover, .back:focus{
+  color:#fff;
+  background:rgba(255,255,255,0.1);
+  outline:2px solid var(--accent);
+}
+
+/* TITLE */
+
+.heading{
+  padding:32px 0 20px;
+}
+
+.heading h1{
+  font-size:clamp(28px,4vw,44px);
+}
+
+.heading p{
+  margin-top:8px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+/* RED LIVE DOT */
+
+.live-dot{
+  display:inline-block;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#ff0000;
+  margin-right:7px;
+  animation:blink 1.1s infinite;
+}
+
+@keyframes blink{
+  0%,100%{
+    opacity:1;
+    transform:scale(1);
+  }
+  50%{
+    opacity:.35;
+    transform:scale(.75);
+  }
+}
+
+/* SECTION */
+
+.section{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:8px 0 14px;
+}
+
+.section h2{
+  font-size:21px;
+}
+
+.badge{
+  background:#e50914;
+  padding:5px 8px;
+  border-radius:5px;
+  font-size:10px;
+  font-weight:800;
+}
+
+/* CHANNEL GRID */
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(7,minmax(0,1fr));
+  gap:14px;
+  padding-bottom:50px;
+}
+
+.card{
+  background:#0e1117;
+  border:2px solid var(--line);
+  border-radius:11px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:transform .2s, border-color .2s, box-shadow .2s;
+  display:flex;
+  flex-direction:column;
+  outline:none;
+}
+
+/* TV FOCUS EFFECT (CARD) */
+.card:focus,
+.card.tv-focused{
+  transform:scale(1.05);
+  border-color:#ffcc00 !important;
+  outline:3px solid #ffcc00 !important;
+  outline-offset:2px;
+  box-shadow:0 12px 35px rgba(0,0,0,.7);
+  z-index:10;
+}
+
+/* POSTER */
+
+.poster{
+  position:relative;
+  aspect-ratio:2/3;
+  background:#151b24;
+  overflow:hidden;
+}
+
+.poster img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.poster-fallback{
+  width:100%;
+  height:100%;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:15px;
+  font-weight:900;
+  font-size:18px;
+}
+
+.play{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  background:#e50914;
+  display:grid;
+  place-items:center;
+  font-size:21px;
+  box-shadow:0 4px 20px rgba(0,0,0,.45);
+}
+
+.live-label{
+  position:absolute;
+  top:9px;
+  left:9px;
+  background:#e50914;
+  color:white;
+  padding:5px 7px;
+  border-radius:5px;
+  font-size:9px;
+  font-weight:900;
+}
+
+/* INFO */
+
+.info{
+  padding:11px;
+  display:flex;
+  flex-direction:column;
+  flex-grow:1;
+}
+
+.title{
+  font-size:13px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.meta{
+  font-size:10px;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+/* TV ACTION BUTTONS */
+.channel-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:10px;
+}
+
+.tv-btn{
+  min-height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:7px 5px;
+  font-size:10px;
+  font-weight:850;
+  border-radius:7px;
+  text-decoration:none;
+  outline:none;
+  cursor:pointer;
+  transition:
+    transform .18s ease,
+    background .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease;
+}
+
+.btn-player{
+  background:#e50914;
+  border:1px solid #e50914;
+  color:#fff;
+  box-shadow:0 5px 16px rgba(229,9,20,.18);
+}
+
+.btn-player:hover{
+  background:#f6121d;
+}
+
+.btn-direct{
+  background:#171c25;
+  border:1px solid #3a4352;
+  color:#fff;
+}
+
+.btn-direct:hover{
+  background:#222936;
+  border-color:#596577;
+}
+
+/* TV FOCUS EFFECT */
+.card:focus,
+.card.tv-focused{
+  transform:scale(1.035);
+}
+
+.tv-btn:focus{
+  transform:scale(1.045);
+  background:#e50914 !important;
+  color:#fff !important;
+  border-color:#fff !important;
+  box-shadow:0 0 0 3px rgba(229,9,20,.32),0 8px 20px rgba(0,0,0,.45);
+  outline:none;
+}
+
+.grid{
+  scroll-behavior:smooth;
+}
+
+.card{
+  will-change:transform;
+  scroll-margin-top:95px;
+  scroll-margin-bottom:95px;
+}
+
+/* EMPTY */
+
+.empty{
+  padding:45px 15px;
+  text-align:center;
+  color:var(--muted);
+  border:1px dashed var(--line);
+  border-radius:10px;
+  margin-bottom:40px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1200px){
+  .grid{
+    grid-template-columns:repeat(5,minmax(0,1fr));
+  }
+}
+
+@media(max-width:900px){
+  .grid{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+  }
+}
+
+@media(max-width:600px){
+  .grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:8px;
+  }
+  .title{
+    font-size:11px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="container nav">
+    <a class="logo" href="index.html" tabindex="1">
+      NIGHT<span>FLIX</span>
+    </a>
+
+    <a class="back" href="index.html" tabindex="2">
+      ← Back to Movies
+    </a>
+  </div>
+</header>
+
+<main class="container">
+  <section class="heading">
+    <h1>
+      <span class="live-dot"></span>
+      LIVE TV
+    </h1>
+    <p>Live channels (TV Remote Optimized)</p>
+  </section>
+
+  <div class="section">
+    <h2>Live Channels</h2>
+    <span class="badge">LIVE</span>
+  </div>
+
+  <div id="grid" class="grid"></div>
+
+  <div id="empty" class="empty" style="display:none;">
+    No LIVE TV channels found.
+  </div>
+</main>
+
+<script>
+"use strict";
+
+const grid = document.getElementById("grid");
+const empty = document.getElementById("empty");
+
+function isLiveChannel(item){
+  if(!item || typeof item !== "object") return false;
+  const type = String(
+    item.contentType ||
+    item.type ||
+    item.categoryType ||
+    ""
+  ).toLowerCase().replace(/[\s_-]/g,"");
+
+  return (
+    type === "live" ||
+    type === "livetv" ||
+    type === "livechannel" ||
+    item.live === true ||
+    item.isLive === true
+  );
+}
+
+function safe(value){
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+async function loadLiveChannels(){
+  try{
+    const response = await fetch("movies.json", {cache:"no-store"});
+    if(!response.ok) throw new Error("HTTP error " + response.status);
+
+    const data = await response.json();
+    if(!Array.isArray(data)) throw new Error("Invalid json");
+
+    const channels = data.filter(isLiveChannel);
+    if(channels.length === 0){
+      empty.style.display = "block";
+      return;
+    }
+
+    grid.innerHTML = channels.map((channel, index)=>{
+      const title = channel.title || "Live Channel";
+      const poster = channel.poster || "";
+      const category = channel.genre || channel.category || "Live TV";
+      const stream = channel.watch || channel.stream || channel.url || channel.link || "";
+
+      return `
+        <article class="card" tabindex="0" data-index="${index}">
+          <div class="poster">
+            <img src="${safe(poster)}" alt="${safe(title)}" loading="lazy">
+            <div class="poster-fallback">${safe(title)}</div>
+            <div class="live-label">● LIVE</div>
+            <div class="play">▶</div>
+          </div>
+
+          <div class="info">
+            <div class="title">${safe(title)}</div>
+            <div class="meta">${safe(category)} • Live</div>
+
+            <!-- TV REMOTE CONTROL BUTTONS -->
+            <div class="channel-actions">
+              <a href="live-player.html?url=${encodeURIComponent(stream)}" class="tv-btn btn-player" tabindex="0" title="Web Player">
+                ▶ Web
+              </a>
+              <a href="${safe(stream)}" target="_blank" class="tv-btn btn-direct" tabindex="0" title="Direct Stream">
+                🔗 Direct
+              </a>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+
+    /* IMAGE ERROR FALLBACK */
+    document.querySelectorAll(".poster img").forEach(img=>{
+      img.addEventListener("error", function(){
+        this.style.display = "none";
+        const fallback = this.nextElementSibling;
+        if(fallback) fallback.style.display = "flex";
+      });
+    });
+
+    /* ========================================================
+       SMART TV REMOTE D-PAD NAVIGATION (ARROW KEYS + OK)
+       ======================================================== */
+    const cards = Array.from(document.querySelectorAll(".card"));
+
+    function getColumns(){
+      if(cards.length < 2) return 1;
+      const firstTop = cards[0].getBoundingClientRect().top;
+      const count = cards.filter(card =>
+        Math.abs(card.getBoundingClientRect().top - firstTop) <= 12
+      ).length;
+      return Math.max(1, count);
+    }
+
+    function smoothFocus(elem){
+      if(!elem) return;
+
+      elem.focus({preventScroll:true});
+
+      requestAnimationFrame(()=>{
+        elem.scrollIntoView({
+          behavior:"smooth",
+          block:"center",
+          inline:"nearest"
+        });
+      });
+    }
+
+    // Har card ke events
+    cards.forEach((card, index)=>{
+      const buttons = Array.from(card.querySelectorAll(".tv-btn"));
+
+      // Card focus navigation
+      card.addEventListener("keydown", (e)=>{
+        const cols = getColumns();
+
+        if(e.target === card){
+          if(e.key === "ArrowRight"){
+            e.preventDefault();
+            if(cards[index + 1]) smoothFocus(cards[index + 1]);
+          }
+          else if(e.key === "ArrowLeft"){
+            e.preventDefault();
+            if(cards[index - 1]) smoothFocus(cards[index - 1]);
+          }
+          else if(e.key === "ArrowDown"){
+            // Card se direct niche wale buttons par utre
+            e.preventDefault();
+            smoothFocus(buttons[0]);
+          }
+          else if(e.key === "ArrowUp"){
+            e.preventDefault();
+            if(index - cols >= 0){
+              smoothFocus(cards[index - cols]);
+            } else {
+              document.querySelector(".back").focus();
+            }
+          }
+          else if(e.key === "Enter" || e.key === " "){
+            e.preventDefault();
+            // Default Play on Enter
+            buttons[0].click();
+          }
+        }
+      });
+
+      // Card ke andar ke buttons (Web / Direct / VLC) ka D-PAD control
+      buttons.forEach((btn, bIndex)=>{
+        btn.addEventListener("keydown", (e)=>{
+          if(e.key === "ArrowRight"){
+            e.preventDefault();
+            if(buttons[bIndex + 1]){
+              smoothFocus(buttons[bIndex + 1]);
+            } else if(cards[index + 1]){
+              smoothFocus(cards[index + 1]);
+            }
+          }
+          else if(e.key === "ArrowLeft"){
+            e.preventDefault();
+            if(buttons[bIndex - 1]){
+              smoothFocus(buttons[bIndex - 1]);
+            } else {
+              smoothFocus(card);
+            }
+          }
+          else if(e.key === "ArrowUp"){
+            e.preventDefault();
+            smoothFocus(card);
+          }
+          else if(e.key === "ArrowDown"){
+            e.preventDefault();
+            const cols = getColumns();
+            if(cards[index + cols]){
+              smoothFocus(cards[index + cols]);
+            }
+          }
+          else if(e.key === "Enter"){
+            // Click native anchor
+            btn.click();
+          }
+        });
+      });
+    });
+
+    // Default focus on first card for TV
+    if(cards[0]) cards[0].focus();
+
+  } catch(err){
+    console.error(err);
+    empty.style.display = "block";
+    empty.textContent = "Channels load nahi hue. movies.json check karein.";
+  }
+}
+
+loadLiveChannels();
+</script>
+
+<!-- NIGHTFLIX CASUAL DEVTOOLS PROTECTION -->
+<script>
+(function () {
+  "use strict";
+
+  document.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+  }, { capture: true });
+
+  document.addEventListener("keydown", function (e) {
+    var key = String(e.key || "").toLowerCase();
+    var code = String(e.code || "").toLowerCase();
+
+    if (e.key === "F12" || code === "f12" ||
+       (e.ctrlKey && e.shiftKey && (key === "i" || key === "j" || key === "c")) ||
+       (e.ctrlKey && (key === "u" || key === "s"))) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+  }, { capture: true });
+})();
+</script>
+
+</body>
+</html>

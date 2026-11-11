@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NIGHTFLIX — Player</title>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;font-family:Arial,sans-serif}
+body{display:flex;align-items:center;justify-content:center}
+#player-container{position:relative;width:100vw;height:100vh;background:#000;overflow:hidden}
+video{width:100%;height:100%;display:block;background:#000;object-fit:contain}
+#loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:15px;background:#000;color:#fff;z-index:20}
+.spinner{width:45px;height:45px;border:4px solid #333;border-top:4px solid #fff;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loading-text{font-size:16px;color:#ddd;text-align:center;padding:0 20px}
+#error{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:25px;background:#000;color:#fff;z-index:30}
+#error h2{margin:0 0 12px;font-size:24px}
+#error-message{max-width:850px;color:#aaa;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+#retry{margin-top:15px;padding:12px 25px;border:0;border-radius:6px;background:#e50914;color:#fff;font-size:16px;cursor:pointer}
+#live-badge{position:absolute;top:18px;left:18px;z-index:10;display:none;padding:7px 12px;border-radius:5px;background:rgba(0,0,0,.75);color:#fff;font-size:13px;font-weight:bold;letter-spacing:.5px}
+#live-dot{display:inline-block;width:8px;height:8px;margin-right:6px;background:red;border-radius:50%}
+#status{position:absolute;bottom:85px;left:50%;transform:translateX(-50%);display:none;padding:8px 14px;background:rgba(0,0,0,.78);color:#fff;border-radius:5px;font-size:14px;z-index:25;text-align:center}
+#controls{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:10px;padding:10px;background:rgba(0,0,0,.7);border-radius:10px;z-index:15}
+.control-btn{min-width:55px;min-height:45px;border:0;border-radius:7px;background:rgba(255,255,255,.15);color:#fff;font-size:20px;cursor:pointer}
+.control-btn:hover,.control-btn:focus{background:rgba(255,255,255,.3)}
+button:focus{outline:3px solid #ffcc00;outline-offset:2px}
+
+/* AUTO-HIDE CUSTOM PLAYER CONTROLS */
+#controls{
+  opacity:1;
+  visibility:visible;
+  transform:translateX(-50%) translateY(0);
+  transition:opacity .25s ease, visibility .25s ease, transform .25s ease;
+}
+#player-container.controls-hidden #controls{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateX(-50%) translateY(12px);
+}
+</style>
+</head>
+<body>
+
+<div id="player-container">
+  <video id="video" playsinline webkit-playsinline preload="auto" controls></video>
+  <div id="live-badge"><span id="live-dot"></span>LIVE</div>
+  <div id="loading"><div class="spinner"></div><div id="loading-text">Loading video...</div></div>
+  <div id="status"></div>
+  <div id="error">
+    <h2>Video Playback Error</h2>
+    <p id="error-message">Video load nahi ho saki.</p>
+    <button id="retry" tabindex="0">Retry</button>
+  </div>
+  <div id="controls">
+    <button id="playBtn" class="control-btn" tabindex="0" aria-label="Play or Pause">▶</button>
+    <button id="muteBtn" class="control-btn" tabindex="0" aria-label="Mute">🔊</button>
+    <button id="fullscreenBtn" class="control-btn" tabindex="0" aria-label="Fullscreen">⛶</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+const video = document.getElementById("video");
+const loading = document.getElementById("loading");
+const loadingText = document.getElementById("loading-text");
+const errorBox = document.getElementById("error");
+const errorMessage = document.getElementById("error-message");
+const retryButton = document.getElementById("retry");
+const liveBadge = document.getElementById("live-badge");
+const statusBox = document.getElementById("status");
+const playBtn = document.getElementById("playBtn");
+const muteBtn = document.getElementById("muteBtn");
+const fullscreenBtn = document.getElementById("fullscreenBtn");
+
+let hls = null;
+let currentStreamUrl = "";
+let controlsHideTimer = null;
+const playerContainer = document.getElementById("player-container");
+
+function showControls(){
+  if(!playerContainer) return;
+  playerContainer.classList.remove("controls-hidden");
+  clearTimeout(controlsHideTimer);
+
+  if(!video.paused){
+    controlsHideTimer = setTimeout(hideControls, 10000);
+  }
+}
+
+function hideControls(){
+  if(!playerContainer || video.paused) return;
+  playerContainer.classList.add("controls-hidden");
+}
+
+function scheduleControlsHide(){
+  clearTimeout(controlsHideTimer);
+  if(!video.paused){
+    controlsHideTimer = setTimeout(hideControls, 10000);
+  }
+}
+
+
+function getStreamUrl(){
+  const params = new URLSearchParams(window.location.search);
+  return params.get("video") || params.get("url") || params.get("src") || params.get("stream") || "";
+}
+
+function showLoading(msg = "Loading video..."){
+  loadingText.textContent = msg;
+  loading.style.display = "flex";
+  errorBox.style.display = "none";
+}
+
+function hideLoading(){
+  loading.style.display = "none";
+}
+
+function showError(msg){
+  hideLoading();
+  errorMessage.textContent = msg;
+  errorBox.style.display = "flex";
+  liveBadge.style.display = "none";
+}
+
+function hideError(){
+  errorBox.style.display = "none";
+}
+
+function showStatus(msg){
+  statusBox.textContent = msg;
+  statusBox.style.display = "block";
+  clearTimeout(window.statusTimer);
+  window.statusTimer = setTimeout(() => {
+    statusBox.style.display = "none";
+  }, 2000);
+}
+
+function destroyHls(){
+  if(hls){
+    try { hls.destroy(); } catch(e){}
+    hls = null;
+  }
+}
+
+function playVideo(){
+  video.muted = false;
+  const promise = video.play();
+  if(promise !== undefined){
+    promise.then(()=>{
+      hideLoading();
+      updatePlayButton();
+      updateMuteButton();
+    }).catch(()=>{
+      // TV / Mobile Autoplay Policy Fallback
+      video.muted = true;
+      video.play().then(()=>{
+        hideLoading();
+        updatePlayButton();
+        updateMuteButton();
+        showStatus("Press OK/Sound button for audio");
+      }).catch(()=>{
+        hideLoading();
+        updatePlayButton();
+        showStatus("Press Play to start");
+      });
+    });
+  }
+}
+
+function loadStream(){
+  destroyHls();
+  hideError();
+  showLoading("Connecting to video...");
+  liveBadge.style.display = "none";
+
+  currentStreamUrl = getStreamUrl();
+
+  if(!currentStreamUrl){
+    showError("Movie URL nahi mila. Please movie wapas select karein.");
+    return;
+  }
+
+  const cleanUrl = currentStreamUrl.split("?")[0].toLowerCase();
+  const isHls = cleanUrl.endsWith(".m3u8") || currentStreamUrl.toLowerCase().includes(".m3u8");
+
+  // CASE 1: AGAR LIVE CHANNEL / HLS (.m3u8) HAI
+  if(isHls){
+    liveBadge.style.display = "block";
+
+    if(window.Hls && Hls.isSupported()){
+      hls = new Hls({
+        enableWorker: false,
+        lowLatencyMode: false
+      });
+
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MEDIA_ATTACHED, function(){
+        hls.loadSource(currentStreamUrl);
+      });
+
+      hls.on(Hls.Events.MANIFEST_PARSED, function(){
+        hideLoading();
+        playVideo();
+      });
+
+      hls.on(Hls.Events.ERROR, function(e, data){
+        if(data.fatal){
+          if(data.type === Hls.ErrorTypes.NETWORK_ERROR){
+            hls.startLoad();
+          } else if(data.type === Hls.ErrorTypes.MEDIA_ERROR){
+            hls.recoverMediaError();
+          } else {
+            showError("Live stream load nahi ho saki.");
+          }
+        }
+      });
+      return;
+    }
+
+    if(video.canPlayType("application/vnd.apple.mpegurl")){
+      video.src = currentStreamUrl;
+      video.load();
+      playVideo();
+      return;
+    }
+  }
+
+  // CASE 2: NORMAL MOVIE / MP4 VIDEO (FIX FOR MOVIE PLAYBACK)
+  liveBadge.style.display = "none";
+  video.src = currentStreamUrl;
+  video.load();
+
+  video.oncanplay = function(){
+    hideLoading();
+    playVideo();
+  };
+
+  video.onerror = function(){
+    console.error("Video error:", video.error);
+    showError("Movie link play nahi ho raha hai. Link expire ho chuka ho sakta hai ya CORS block hai.");
+  };
+}
+
+function togglePlay(){
+  if(video.paused){
+    video.play().then(updatePlayButton).catch(()=>showStatus("Play failed"));
+  }else{
+    video.pause();
+    updatePlayButton();
+  }
+}
+
+function updatePlayButton(){ playBtn.textContent = video.paused ? "▶" : "⏸"; }
+function toggleMute(){ video.muted = !video.muted; updateMuteButton(); }
+function updateMuteButton(){ muteBtn.textContent = (video.muted || video.volume === 0) ? "🔇" : "🔊"; }
+
+function toggleFullscreen(){
+  const container = document.getElementById("player-container");
+  if(document.fullscreenElement || document.webkitFullscreenElement){
+    if(document.exitFullscreen) document.exitFullscreen();
+    else if(document.webkitExitFullscreen) document.webkitExitFullscreen();
+  } else {
+    if(container.requestFullscreen) container.requestFullscreen();
+    else if(container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+    else if(video.webkitEnterFullscreen) video.webkitEnterFullscreen();
+  }
+}
+
+/* TV REMOTE CONTROLS */
+document.addEventListener("keydown", function(e){
+  showControls();
+  if(e.key === "Enter" || e.keyCode === 13){
+    e.preventDefault();
+    if(video.muted){
+      video.muted = false;
+      updateMuteButton();
+      showStatus("Audio Unmuted");
+      return;
+    }
+    togglePlay();
+  }
+  else if(e.key === " "){
+    e.preventDefault();
+    togglePlay();
+  }
+  else if(e.key === "ArrowUp"){
+    e.preventDefault();
+    video.muted = false;
+    video.volume = Math.min(1, video.volume + 0.1);
+    updateMuteButton();
+    showStatus("Volume " + Math.round(video.volume * 100) + "%");
+  }
+  else if(e.key === "ArrowDown"){
+    e.preventDefault();
+    video.muted = false;
+    video.volume = Math.max(0, video.volume - 0.1);
+    updateMuteButton();
+    showStatus("Volume " + Math.round(video.volume * 100) + "%");
+  }
+  else if(e.key === "ArrowLeft"){
+    e.preventDefault();
+    if(Number.isFinite(video.duration)){
+      video.currentTime = Math.max(0, video.currentTime - 10);
+      showStatus("-10s");
+    }
+  }
+  else if(e.key === "ArrowRight"){
+    e.preventDefault();
+    if(Number.isFinite(video.duration)){
+      video.currentTime = Math.min(video.duration, video.currentTime + 10);
+      showStatus("+10s");
+    }
+  }
+  else if(e.key === "f" || e.key === "F"){
+    e.preventDefault();
+    toggleFullscreen();
+  }
+  else if(e.key === "Escape" || e.key === "Backspace" || e.keyCode === 4){
+    e.preventDefault();
+    if(document.fullscreenElement || document.webkitFullscreenElement){
+      toggleFullscreen();
+    } else {
+      window.history.back();
+    }
+  }
+});
+
+
+/* Touch/click anywhere on the video: show controls again */
+["pointerdown","touchstart","mousemove"].forEach(function(type){
+  playerContainer.addEventListener(type, function(){
+    showControls();
+  }, {passive:true});
+});
+
+playerContainer.addEventListener("click", function(e){
+  if(e.target === playerContainer || e.target === video){
+    showControls();
+  }
+});
+
+playBtn.addEventListener("click", togglePlay);
+muteBtn.addEventListener("click", toggleMute);
+fullscreenBtn.addEventListener("click", toggleFullscreen);
+retryButton.addEventListener("click", loadStream);
+
+video.addEventListener("play", function(){ updatePlayButton(); showControls(); scheduleControlsHide(); });
+video.addEventListener("pause", function(){ updatePlayButton(); showControls(); });
+video.addEventListener("waiting", () => showStatus("Buffering..."));
+video.addEventListener("playing", () => { hideLoading(); hideError(); });
+
+loadStream();
+</script>
+
+</body>
+</html>

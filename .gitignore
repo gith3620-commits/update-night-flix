@@ -1,0 +1,25 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Local movie-import files
+MOVIE_ASSETS/
+
+# Generated/local files
+*.log
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/

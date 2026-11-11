@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<meta
+  name="theme-color"
+  content="#080a0f"
+>
+
+<script
+  id="aclib"
+  type="text/javascript"
+  src="//acscdn.com/script/aclib.js">
+</script>
+
+<title>NIGHTFLIX — Movie Details</title>
+
+<style>
+
+/* =========================
+   RESET
+========================= */
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+
+/* =========================
+   VARIABLES
+========================= */
+
+:root{
+  --bg:#07090d;
+  --panel:#10151e;
+  --panel2:#141a24;
+
+  --text:#f2f5f9;
+  --muted:#8994a6;
+
+  --line:#222b38;
+
+  --accent:#ff0000;
+  --accent2:#cc0000;
+
+  --watch:#20c77a;
+  --watch2:#2ee18e;
+}
+
+
+/* =========================
+   BODY
+========================= */
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
+
+  color:var(--text);
+
+  min-height:100vh;
+
+  background:
+    radial-gradient(
+      900px 520px at 50% -120px,
+      rgba(255,104,71,.11),
+      transparent 65%
+    ),
+
+    radial-gradient(
+      700px 500px at 100% 35%,
+      rgba(255,104,71,.035),
+      transparent 70%
+    ),
+
+    linear-gradient(
+      180deg,
+      #080a0f,
+      #090c12 50%,
+      #07090d
+    );
+}
+
+
+a{
+  text-decoration:none;
+  color:inherit;
+}
+
+
+.container{
+  width:min(1200px,100%);
+
+  margin:auto;
+
+  padding:0 20px;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+  position:sticky;
+
+  top:0;
+
+  z-index:100;
+
+  height:70px;
+
+  display:flex;
+
+  align-items:center;
+
+  background:rgba(7,9,13,.78);
+
+  backdrop-filter:blur(18px);
+
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+
+.nav{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+}
+
+
+.logo{
+  font-size:24px;
+
+  font-weight:950;
+
+  letter-spacing:1.5px;
+}
+
+
+.logo span{
+  color:var(--accent);
+}
+
+
+.back{
+  border:1px solid #293241;
+
+  background:#10151e;
+
+  color:#d9dfe8;
+
+  padding:10px 15px;
+
+  border-radius:9px;
+
+  cursor:pointer;
+
+  font-weight:700;
+}
+
+
+.back:hover{
+  background:#171e28;
+
+  border-color:#465267;
+}
+
+
+/* =========================
+   MOVIE PAGE
+========================= */
+
+.movie-page{
+  padding:45px 0 70px;
+}
+
+
+.movie-layout{
+  display:grid;
+
+  grid-template-columns:300px 1fr;
+
+  gap:35px;
+
+  align-items:start;
+}
+
+
+/* =========================
+   POSTER
+========================= */
+
+.poster-box{
+  border-radius:14px;
+
+  overflow:hidden;
+
+  border:1px solid #252f3c;
+
+  background:#111720;
+
+  box-shadow:
+    0 20px 50px rgba(0,0,0,.4);
+}
+
+
+.poster-box img{
+  display:block;
+
+  width:100%;
+
+  aspect-ratio:2/3;
+
+  object-fit:cover;
+}
+
+
+/* =========================
+   DETAILS
+========================= */
+
+.details{
+  padding-top:5px;
+}
+
+
+.kicker{
+  color:var(--accent);
+
+  font-size:12px;
+
+  font-weight:800;
+
+  letter-spacing:2px;
+
+  text-transform:uppercase;
+
+  margin-bottom:12px;
+}
+
+
+h1{
+  font-size:clamp(32px,5vw,56px);
+
+  line-height:1.05;
+
+  margin-bottom:15px;
+}
+
+
+.description{
+  color:var(--muted);
+
+  line-height:1.7;
+
+  font-size:14px;
+
+  max-width:700px;
+
+  margin-bottom:20px;
+}
+
+
+/* =========================
+   META
+========================= */
+
+.meta{
+  display:flex;
+
+  gap:9px;
+
+  flex-wrap:wrap;
+
+  margin-bottom:28px;
+}
+
+
+.tag{
+  padding:8px 12px;
+
+  border-radius:8px;
+
+  background:#111720;
+
+  border:1px solid #293241;
+
+  color:#cdd4df;
+
+  font-size:12px;
+}
+
+
+/* =========================
+   WATCH / DOWNLOAD BOX
+========================= */
+
+.download-box{
+  margin-top:20px;
+
+  padding:22px;
+
+  border-radius:14px;
+
+  border:1px solid #293241;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(20,26,36,.95),
+      rgba(12,16,23,.95)
+    );
+
+  max-width:750px;
+}
+
+
+.download-box h2{
+  font-size:20px;
+
+  margin-bottom:7px;
+}
+
+
+.download-box p{
+  color:var(--muted);
+
+  font-size:12px;
+
+  margin-bottom:17px;
+}
+
+
+/* =========================
+   MOVIE BUTTONS
+========================= */
+
+.movie-actions{
+  display:flex;
+
+  flex-wrap:wrap;
+
+  gap:10px;
+}
+
+
+.watch-btn,
+.download-btn{
+
+  display:inline-flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:8px;
+
+  color:white;
+
+  padding:13px 20px;
+
+  border-radius:10px;
+
+  font-size:14px;
+
+  font-weight:800;
+
+  transition:.2s;
+}
+
+
+.watch-btn{
+  background:var(--watch);
+}
+
+
+.watch-btn:hover{
+  background:var(--watch2);
+
+  transform:translateY(-2px);
+}
+
+
+.download-btn{
+  background:var(--accent2);
+}
+
+
+.download-btn:hover{
+  background:#e00000;
+
+  transform:translateY(-2px);
+}
+
+
+/* =========================
+   EPISODES
+========================= */
+
+.episodes-section{
+  margin-top:55px;
+}
+
+
+.episodes-section h2{
+  font-size:24px;
+
+  margin-bottom:18px;
+}
+
+
+.episode-list{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:12px;
+
+  max-width:850px;
+}
+
+
+.episode-card{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:20px;
+
+  padding:16px;
+
+  background:#10151e;
+
+  border:1px solid #293241;
+
+  border-radius:12px;
+
+  transition:.2s;
+}
+
+
+.episode-card:hover{
+  border-color:#3a4658;
+
+  background:#131a24;
+}
+
+
+.episode-info{
+  min-width:0;
+}
+
+
+.episode-number{
+  color:var(--accent);
+
+  font-size:12px;
+
+  font-weight:800;
+
+  margin-bottom:5px;
+}
+
+
+.episode-title{
+  font-size:15px;
+
+  font-weight:700;
+
+  white-space:nowrap;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+}
+
+
+.episode-actions{
+  display:flex;
+
+  gap:8px;
+
+  flex-shrink:0;
+}
+
+
+.episode-actions a{
+  display:inline-flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  padding:9px 13px;
+
+  border-radius:8px;
+
+  font-size:12px;
+
+  font-weight:800;
+
+  transition:.2s;
+}
+
+
+.episode-watch{
+  background:var(--watch);
+
+  color:white;
+}
+
+
+.episode-watch:hover{
+  background:var(--watch2);
+
+  transform:translateY(-2px);
+}
+
+
+.episode-download{
+  background:var(--accent);
+
+  color:white;
+}
+
+
+.episode-download:hover{
+  background:var(--accent2);
+
+  transform:translateY(-2px);
+}
+
+
+/* =========================
+   NO LINK
+========================= */
+
+.no-link{
+  color:#ff8b75;
+
+  font-size:13px;
+}
+
+
+/* =========================
+   PHOTOS
+========================= */
+
+.photos-section{
+  margin-top:55px;
+}
+
+
+.photos-section h2{
+  font-size:24px;
+
+  margin-bottom:18px;
+}
+
+
+.photos{
+  display:grid;
+
+  grid-template-columns:repeat(4,1fr);
+
+  gap:12px;
+}
+
+
+.photos img{
+  width:100%;
+
+  aspect-ratio:16/10;
+
+  object-fit:cover;
+
+  border-radius:10px;
+
+  border:1px solid #252f3c;
+
+  background:#111720;
+}
+
+
+/* =========================
+   ERROR
+========================= */
+
+.error{
+  text-align:center;
+
+  padding:100px 20px;
+}
+
+
+.error h1{
+  font-size:35px;
+}
+
+
+.error p{
+  color:var(--muted);
+
+  margin:12px 0 25px;
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media(max-width:800px){
+
+  .movie-layout{
+    grid-template-columns:210px 1fr;
+
+    gap:22px;
+  }
+
+
+  h1{
+    font-size:34px;
+  }
+
+
+  .photos{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+
+  .episode-card{
+    align-items:flex-start;
+  }
+
+
+  .episode-actions{
+    flex-direction:column;
+  }
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:600px){
+
+  header{
+    height:62px;
+  }
+
+
+  .logo{
+    font-size:20px;
+  }
+
+
+  .movie-page{
+    padding-top:25px;
+  }
+
+
+  .movie-layout{
+    grid-template-columns:1fr;
+  }
+
+
+  .poster-box{
+    width:min(260px,100%);
+
+    margin:auto;
+  }
+
+
+  .details{
+    text-align:left;
+  }
+
+
+  h1{
+    font-size:32px;
+  }
+
+
+  .download-box{
+    padding:18px;
+  }
+
+
+  .movie-actions{
+    flex-direction:column;
+  }
+
+
+  .watch-btn,
+  .download-btn{
+    width:100%;
+  }
+
+
+  .photos{
+    grid-template-columns:1fr 1fr;
+
+    gap:8px;
+  }
+
+
+  .episode-card{
+    flex-direction:column;
+
+    align-items:stretch;
+  }
+
+
+  .episode-actions{
+    flex-direction:row;
+
+    width:100%;
+  }
+
+
+  .episode-actions a{
+    flex:1;
+
+    text-align:center;
+  }
+
+}
+
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media(max-width:350px){
+
+  .photos{
+    grid-template-columns:1fr;
+  }
+
+
+  .episode-actions{
+    flex-direction:column;
+  }
+
+}
+
+
+/* =========================
+   WEBVIEW / MOBILE DARK FIX
+========================= */
+
+html,
+body,
+main.movie-page,
+.movie-page,
+.movie-page > .container,
+#movieContent{
+
+  background-color:#07090d !important;
+
+  color:#f2f5f9 !important;
+}
+
+
+html{
+  background:#07090d !important;
+}
+
+
+body{
+  background-attachment:scroll !important;
+
+  -webkit-text-size-adjust:100%;
+}
+
+
+.movie-page h1,
+.movie-page h2,
+.movie-page .details,
+.movie-page .description{
+
+  color:#f2f5f9 !important;
+}
+
+
+.movie-page .description{
+  color:#8994a6 !important;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+
+  <div class="container nav">
+
+    <a
+      class="logo"
+      href="index.html"
+    >
+      NIGHT<span>FLIX</span>
+    </a>
+
+
+    <button
+      class="back"
+      onclick="history.back()"
+    >
+      ← Back
+    </button>
+
+  </div>
+
+</header>
+
+
+<!-- =========================
+     MOVIE PAGE
+========================= -->
+
+<main class="movie-page">
+
+  <div class="container">
+
+    <div id="movieContent"></div>
+
+  </div>
+
+</main>
+
+
+<script>
+
+/* =========================
+   GLOBAL
+========================= */
+
+let movies = [];
+
+const content =
+  document.getElementById("movieContent");
+
+
+/* =========================
+   HTML SAFE
+========================= */
+
+function escapeHtml(value){
+
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+
+    c => ({
+
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+
+    }[c])
+
+  );
+
+}
+
+
+/* =========================
+   CHECK LINK
+========================= */
+
+function hasLink(link){
+
+  return (
+    typeof link === "string" &&
+    link.trim() !== ""
+  );
+
+}
+
+
+/* =========================
+   PLAYER URL
+========================= */
+
+function playerUrl(link, title){
+
+  if(!hasLink(link)){
+    return "";
+  }
+
+  return (
+    "player.html?video=" +
+    encodeURIComponent(link) +
+    "&title=" +
+    encodeURIComponent(
+      title || "NIGHTFLIX"
+    )
+  );
+
+}
+
+
+/* =========================
+   GET MOVIE ID
+========================= */
+
+const params =
+  new URLSearchParams(
+    window.location.search
+  );
+
+
+const movieId =
+  params.get("id");
+
+
+/* =========================
+   LOAD MOVIES
+========================= */
+
+async function loadMovie(){
+
+  try{
+
+    const response =
+      await fetch(
+        "./movies.json",
+        {
+          cache:"no-store"
+        }
+      );
+
+
+    if(!response.ok){
+
+      throw new Error(
+        "movies.json not found"
+      );
+
+    }
+
+
+    movies =
+      await response.json();
+
+
+    if(!Array.isArray(movies)){
+
+      throw new Error(
+        "Invalid movies.json"
+      );
+
+    }
+
+
+    const movie =
+      movies.find(
+        m =>
+          String(m.id) ===
+          String(movieId)
+      );
+
+
+    if(!movie){
+
+      showError(
+        "Movie not found"
+      );
+
+      return;
+
+    }
+
+
+    showMovie(movie);
+
+
+  }catch(error){
+
+    console.error(
+      "Movie loading error:",
+      error
+    );
+
+
+    showError(
+      "Movie data could not be loaded"
+    );
+
+  }
+
+}
+
+
+/* =========================
+   MOVIE BUTTONS
+========================= */
+
+function createMovieButtons(movie){
+
+  /*
+    MOVIE FORMAT:
+
+    "watch": "WATCH LINK",
+    "download": "DOWNLOAD LINK"
+
+    IMPORTANT:
+    Movie ke liye bhi watch aur
+    download alag links hain.
+  */
+
+
+  const watch =
+    movie.watch ||
+    movie.watchLink ||
+    "";
+
+
+  const download =
+    movie.download ||
+    movie.downloadLink ||
+    "";
+
+
+  let buttons = "";
+
+
+  /* =========================
+     WATCH
+  ========================= */
+
+  if(hasLink(watch)){
+
+    buttons += `
+
+      <a
+        class="watch-btn"
+        href="${escapeHtml(
+          playerUrl(
+            watch,
+            movie.title || "NIGHTFLIX"
+          )
+        )}"
+        target="_self"
+      >
+        ▶ Watch
+      </a>
+
+    `;
+
+  }
+
+
+  /* =========================
+     DOWNLOAD
+  ========================= */
+
+  if(hasLink(download)){
+
+    buttons += `
+
+      <a
+        class="download-btn"
+        href="${escapeHtml(
+          download
+        )}"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        ↓ Download
+      </a>
+
+    `;
+
+  }
+
+
+  /* =========================
+     NO LINKS
+  ========================= */
+
+  if(!buttons){
+
+    return `
+
+      <div class="no-link">
+
+        Movie links are not available yet.
+
+      </div>
+
+    `;
+
+  }
+
+
+  return `
+
+    <div class="movie-actions">
+
+      ${buttons}
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+   EPISODE BUTTONS
+========================= */
+
+function createEpisodeButtons(episode){
+
+  /*
+    NEW EPISODE FORMAT:
+
+    {
+      "episode": 1,
+      "watch": "WATCH LINK",
+      "download": "DOWNLOAD LINK"
+    }
+
+    IMPORTANT:
+
+    WATCH  -> episode.watch
+    DOWNLOAD -> episode.download
+
+    NO episode.link fallback.
+  */
+
+
+  const watch =
+    episode.watch ||
+    "";
+
+
+  const download =
+    episode.download ||
+    "";
+
+
+  let buttons = "";
+
+
+  /* =========================
+     WATCH BUTTON
+  ========================= */
+
+  if(hasLink(watch)){
+
+    buttons += `
+
+      <a
+        class="episode-watch"
+        href="${escapeHtml(
+          playerUrl(
+            watch,
+            episode.title ||
+            "NIGHTFLIX"
+          )
+        )}"
+        target="_self"
+      >
+        ▶ Watch
+      </a>
+
+    `;
+
+  }
+
+
+  /* =========================
+     DOWNLOAD BUTTON
+  ========================= */
+
+  if(hasLink(download)){
+
+    buttons += `
+
+      <a
+        class="episode-download"
+        href="${escapeHtml(
+          download
+        )}"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        ↓ Download
+      </a>
+
+    `;
+
+  }
+
+
+  /* =========================
+     NO LINKS
+  ========================= */
+
+  if(!buttons){
+
+    buttons = `
+
+      <span class="no-link">
+
+        Links unavailable
+
+      </span>
+
+    `;
+
+  }
+
+
+  return buttons;
+
+}
+
+
+/* =========================
+   EPISODES
+========================= */
+
+function createEpisodes(movie){
+
+  if(
+    !Array.isArray(movie.episodes) ||
+    movie.episodes.length === 0
+  ){
+
+    return "";
+
+  }
+
+
+  return `
+
+    <section class="episodes-section">
+
+      <h2>
+        Episodes
+      </h2>
+
+
+      <div class="episode-list">
+
+        ${movie.episodes.map(
+
+          (episode,index) => `
+
+            <div class="episode-card">
+
+              <div class="episode-info">
+
+                <div class="episode-number">
+
+                  Episode ${
+                    escapeHtml(
+                      episode.episode ||
+                      index + 1
+                    )
+                  }
+
+                </div>
+
+
+                <div class="episode-title">
+
+                  ${escapeHtml(
+                    episode.title ||
+                    `Episode ${index + 1}`
+                  )}
+
+                </div>
+
+              </div>
+
+
+              <div class="episode-actions">
+
+                ${createEpisodeButtons(
+                  episode
+                )}
+
+              </div>
+
+            </div>
+
+          `
+
+        ).join("")}
+
+      </div>
+
+    </section>
+
+  `;
+
+}
+
+
+/* =========================
+   SHOW MOVIE / SERIES
+========================= */
+
+function showMovie(movie){
+
+  const photos =
+    Array.isArray(movie.photos)
+      ? movie.photos
+      : [];
+
+
+  /* =========================
+     PAGE TITLE
+  ========================= */
+
+  document.title =
+    `${movie.title || "Movie"} — NIGHTFLIX`;
+
+
+  /* =========================
+     CONTENT TYPE
+  ========================= */
+
+  const contentType =
+    String(
+      movie.contentType || "movie"
+    ).toLowerCase();
+
+
+  const isSeries =
+    contentType === "webseries" ||
+    contentType === "web-series" ||
+    contentType === "series" ||
+    contentType === "tv" ||
+    (
+      Array.isArray(movie.episodes) &&
+      movie.episodes.length > 0
+    );
+
+
+  /* =========================
+     TYPE TEXT
+  ========================= */
+
+  const typeText =
+    isSeries
+      ? "NIGHTFLIX WEB SERIES"
+      : "NIGHTFLIX MOVIE";
+
+
+  /* =========================
+     EPISODE COUNT
+  ========================= */
+
+  const episodeCount =
+    Array.isArray(movie.episodes)
+      ? movie.episodes.length
+      : 0;
+
+
+  /* =========================
+     PAGE HTML
+  ========================= */
+
+  content.innerHTML = `
+
+    <div class="movie-layout">
+
+
+      <!-- POSTER -->
+
+      <div class="poster-box">
+
+        <img
+          src="${escapeHtml(
+            movie.poster || ""
+          )}"
+          alt="${escapeHtml(
+            movie.title || "Movie"
+          )}"
+          onerror="
+            this.style.opacity='.25'
+          "
+        >
+
+      </div>
+
+
+      <!-- DETAILS -->
+
+      <div class="details">
+
+
+        <div class="kicker">
+
+          ${typeText}
+
+        </div>
+
+
+        <h1>
+
+          ${escapeHtml(
+            movie.title ||
+            "Untitled"
+          )}
+
+        </h1>
+
+
+        <!-- META -->
+
+        <div class="meta">
+
+
+          <span class="tag">
+
+            ${escapeHtml(
+              movie.year ||
+              "N/A"
+            )}
+
+          </span>
+
+
+          <span class="tag">
+
+            ${escapeHtml(
+              movie.genre ||
+              (
+                isSeries
+                  ? "Web Series"
+                  : "Movie"
+              )
+            )}
+
+          </span>
+
+
+          ${
+            isSeries &&
+            episodeCount > 0
+
+            ?
+
+            `
+
+              <span class="tag">
+
+                ${episodeCount}
+                Episodes
+
+              </span>
+
+            `
+
+            :
+
+            ""
+
+          }
+
+
+          ${
+            movie.status
+
+            ?
+
+            `
+
+              <span class="tag">
+
+                ${escapeHtml(
+                  movie.status
+                )}
+
+              </span>
+
+            `
+
+            :
+
+            ""
+
+          }
+
+
+        </div>
+
+
+        <!-- DESCRIPTION -->
+
+        <p class="description">
+
+          ${escapeHtml(
+            movie.description ||
+            "Movie details and viewing information."
+          )}
+
+        </p>
+
+
+        <!-- MOVIE WATCH / DOWNLOAD -->
+
+        ${
+          !isSeries
+
+          ?
+
+          `
+
+            <div class="download-box">
+
+              <h2>
+
+                Watch / Download
+
+              </h2>
+
+
+              <p>
+
+                Choose an option below.
+
+              </p>
+
+
+              ${createMovieButtons(
+                movie
+              )}
+
+            </div>
+
+          `
+
+          :
+
+          ""
+
+        }
+
+
+      </div>
+
+    </div>
+
+
+    <!-- EPISODES -->
+
+    ${
+      isSeries
+        ? createEpisodes(movie)
+        : ""
+    }
+
+
+    <!-- PHOTOS -->
+
+    ${
+      photos.length > 0
+
+      ?
+
+      `
+
+        <section class="photos-section">
+
+
+          <h2>
+
+            Movie Photos
+
+          </h2>
+
+
+          <div class="photos">
+
+
+            ${photos.map(
+
+              photo => `
+
+                ${
+                  hasLink(photo)
+
+                  ?
+
+                  `
+
+                    <img
+                      src="${escapeHtml(
+                        photo
+                      )}"
+                      alt="${escapeHtml(
+                        movie.title ||
+                        "Movie"
+                      )} photo"
+                      loading="lazy"
+                    >
+
+                  `
+
+                  :
+
+                  ""
+
+                }
+
+              `
+
+            ).join("")}
+
+
+          </div>
+
+
+        </section>
+
+      `
+
+      :
+
+      ""
+
+    }
+
+  `;
+
+}
+
+
+/* =========================
+   ERROR PAGE
+========================= */
+
+function showError(message){
+
+  content.innerHTML = `
+
+    <div class="error">
+
+      <h1>
+
+        Oops!
+
+      </h1>
+
+
+      <p>
+
+        ${escapeHtml(
+          message
+        )}
+
+      </p>
+
+
+      <a
+        class="download-btn"
+        href="index.html"
+      >
+
+        ← Back to Movies
+
+      </a>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+loadMovie();
+
+</script>
+
+
+<!-- =========================
+     ADS
+========================= -->
+
+<script type="text/javascript">
+
+if(
+  typeof aclib !== "undefined" &&
+  typeof aclib.runAutoTag === "function"
+){
+
+  aclib.runAutoTag({
+    zoneId: 'utva3b2xep',
+  });
+
+}
+
+</script>
+
+
+<script type="text/javascript">
+
+if(
+  typeof aclib !== "undefined" &&
+  typeof aclib.runInterstitial === "function"
+){
+
+  aclib.runInterstitial({
+    zoneId: '12047466',
+  });
+
+}
+
+</script>
+
+
+<!-- NIGHTFLIX CASUAL DEVTOOLS PROTECTION -->
+<script>
+(function () {
+  "use strict";
+
+  // Block common browser context-menu / source / DevTools shortcuts.
+  document.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+  }, { capture: true });
+
+  document.addEventListener("dragstart", function (e) {
+    e.preventDefault();
+  }, { capture: true });
+
+  document.addEventListener("keydown", function (e) {
+    var key = String(e.key || "").toLowerCase();
+    var code = String(e.code || "").toLowerCase();
+
+    // F12 / DevTools
+    if (e.key === "F12" || code === "f12") {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    // Ctrl+Shift+I / J / C = DevTools
+    if (e.ctrlKey && e.shiftKey && (key === "i" || key === "j" || key === "c")) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    // Ctrl+U = View Source
+    if (e.ctrlKey && key === "u") {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    // Ctrl+S = Save page (casual deterrent)
+    if (e.ctrlKey && key === "s") {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+  }, { capture: true });
+
+  // Discourage text/image selection on ordinary page content while keeping
+  // inputs/search fields usable.
+  var style = document.createElement("style");
+  style.textContent = `
+    body, body * {
+      -webkit-user-select: none !important;
+      user-select: none !important;
+      -webkit-touch-callout: none !important;
+    }
+    input, textarea, select, [contenteditable="true"] {
+      -webkit-user-select: text !important;
+      user-select: text !important;
+      -webkit-touch-callout: default !important;
+    }
+    img, video {
+      -webkit-user-drag: none !important;
+      user-drag: none !important;
+    }
+  `;
+  (document.head || document.documentElement).appendChild(style);
+
+  // Keep the deterrent active if another script replaces the context menu handler.
+  window.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+  }, true);
+})();
+</script>
+
+</body>
+
+</html>

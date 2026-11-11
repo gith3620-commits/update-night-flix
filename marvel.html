@@ -1,0 +1,442 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Marvel Universe | NIGHTFLIX</title> <style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:#070707;
+  color:#eee;
+  font-family:Arial,Helvetica,sans-serif
+}
+
+a{
+  text-decoration:none;
+  color:inherit
+}
+
+/* HEADER */
+header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:rgba(7,7,7,.94);
+  border-bottom:1px solid #222;
+  backdrop-filter:blur(10px)
+}
+
+.nav{
+  max-width:1200px;
+  margin:auto;
+  min-height:70px;
+  padding:0 18px;
+  display:flex;
+  align-items:center;
+  gap:25px
+}
+
+.logo{
+  font-size:26px;
+  font-weight:900;
+  letter-spacing:1px
+}
+
+.logo span{
+  color:#e50914
+}
+
+.home{
+  color:#aaa;
+  margin-left:auto
+}
+
+.home:hover{
+  color:#fff
+}
+
+/* HERO */
+.hero{
+  max-width:1200px;
+  margin:auto;
+  padding:45px 18px 25px
+}
+
+.eyebrow{
+  color:#e50914;
+  font-weight:800;
+  letter-spacing:2px;
+  font-size:13px
+}
+
+.hero h1{
+  font-size:clamp(34px,6vw,64px);
+  margin:8px 0
+}
+
+.hero p{
+  color:#aaa;
+  max-width:650px;
+  line-height:1.6;
+  margin:0
+}
+
+/* SEARCH BAR */
+.bar{
+  max-width:1200px;
+  margin:auto;
+  padding:0 18px 22px;
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  align-items:center
+}
+
+.count{
+  color:#999
+}
+
+.search{
+  background:#111;
+  border:1px solid #292929;
+  color:#fff;
+  border-radius:10px;
+  padding:12px 14px;
+  min-width:240px;
+  outline:none
+}
+
+/* MOVIE GRID */
+.grid{
+  max-width:1200px;
+  margin:auto;
+  padding:0 18px 50px;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:18px
+}
+
+/* MOVIE CARD */
+.card{
+  background:#101010;
+  border:1px solid #202020;
+  border-radius:12px;
+  overflow:hidden;
+  transition:.2s
+}
+
+.card:hover{
+  transform:translateY(-4px);
+  border-color:#444
+}
+
+/* POSTER */
+.poster{
+  aspect-ratio:2/3;
+  background:#151515
+}
+
+.poster img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block
+}
+
+/* MOVIE INFO */
+.info{
+  padding:12px
+}
+
+.title{
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
+
+.meta{
+  margin-top:7px;
+  color:#999;
+  font-size:13px
+}
+
+.empty{
+  grid-column:1/-1;
+  text-align:center;
+  color:#888;
+  padding:60px 10px
+}
+
+/* TABLET */
+@media(max-width:950px){
+
+  .grid{
+    grid-template-columns:repeat(4,1fr)
+  }
+
+}
+
+/* MOBILE - 3 POSTERS PER ROW */
+@media(max-width:700px){
+
+  .grid{
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    padding:0 10px 40px
+  }
+
+  .nav{
+    min-height:60px;
+    padding:0 12px
+  }
+
+  .logo{
+    font-size:22px
+  }
+
+  .home{
+    font-size:13px
+  }
+
+  .bar{
+    align-items:stretch;
+    flex-direction:column;
+    padding:0 10px 18px
+  }
+
+  .search{
+    width:100%;
+    min-width:0
+  }
+
+  .info{
+    padding:8px
+  }
+
+  .title{
+    font-size:13px
+  }
+
+  .meta{
+    margin-top:5px;
+    font-size:11px
+  }
+
+}
+
+/* SMALL MOBILE */
+@media(max-width:380px){
+
+  .grid{
+    gap:6px;
+    padding-left:7px;
+    padding-right:7px
+  }
+
+  .info{
+    padding:6px
+  }
+
+  .title{
+    font-size:12px
+  }
+
+  .meta{
+    font-size:10px
+  }
+
+}
+</style> </head><body><header><div class="nav"><a class="logo" href="index.html"> NIGHT<span>FLIX</span></a><a class="home" href="index.html"> ← Back to Home </a></div></header><section class="hero"><div class="eyebrow"> NIGHTFLIX CONTENT LIBRARY </div><h1>Marvel Universe</h1><p> A dedicated Marvel movie library inside NIGHTFLIX. Only titles marked with the <b>Marvel</b> universe are shown here. </p></section><div class="bar"><div class="count" id="count"> Loading... </div><input class="search" id="search" type="search" placeholder="Search Marvel movies..." ></div><main class="grid" id="grid"></main> <script>
+
+const grid = document.getElementById('grid');
+const count = document.getElementById('count');
+const search = document.getElementById('search');
+
+let marvel = [];
+
+/* ESCAPE HTML */
+const esc = s =>
+  String(s ?? '').replace(
+    /[&<>'"]/g,
+    c => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      "'":'&#39;',
+      '"':'&quot;'
+    }[c])
+  );
+
+/* RENDER MOVIES */
+function render(){
+
+  const q = search.value.trim().toLowerCase();
+
+  const list = marvel.filter(m =>
+    String(m.title || '')
+      .toLowerCase()
+      .includes(q)
+  );
+
+  count.textContent =
+    `${list.length} Marvel movie${list.length === 1 ? '' : 's'}`;
+
+  if(!list.length){
+
+    grid.innerHTML =
+      '<div class="empty">No Marvel movie found.</div>';
+
+    return;
+  }
+
+  grid.innerHTML = list.map(m => `
+
+    <a
+      class="card"
+      href="movie.html?id=${encodeURIComponent(m.id)}"
+    >
+
+      <div class="poster">
+
+        <img
+          src="${esc(m.poster || '')}"
+          alt="${esc(m.title || 'Marvel movie')}"
+          loading="lazy"
+          onerror="this.style.display='none'"
+        >
+
+      </div>
+
+      <div class="info">
+
+        <div class="title">
+          ${esc(m.title || 'Untitled')}
+        </div>
+
+        <div class="meta">
+          ${esc(m.year || '')} • ${esc(m.genre || 'Movie')}
+        </div>
+
+      </div>
+
+    </a>
+
+  `).join('');
+
+}
+
+/* SEARCH */
+search.addEventListener('input', render);
+
+/* LOAD MOVIES.JSON */
+fetch('movies.json')
+
+  .then(r => {
+
+    if(!r.ok){
+      throw new Error('movies.json not found');
+    }
+
+    return r.json();
+
+  })
+
+  .then(data => {
+
+    marvel = Array.isArray(data)
+
+      ? data.filter(m =>
+          String(m.universe || '').toLowerCase() === 'marvel'
+        )
+
+      : [];
+
+    render();
+
+  })
+
+  .catch(e => {
+
+    count.textContent = 'Error';
+
+    grid.innerHTML =
+      '<div class="empty">Marvel library could not be loaded.</div>';
+
+    console.error(e);
+
+  });
+
+</script> <!-- NIGHTFLIX CASUAL DEVTOOLS PROTECTION -->
+<script>
+(function () {
+  "use strict";
+
+  // Block common browser context-menu / source / DevTools shortcuts.
+  document.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+  }, { capture: true });
+
+  document.addEventListener("dragstart", function (e) {
+    e.preventDefault();
+  }, { capture: true });
+
+  document.addEventListener("keydown", function (e) {
+    var key = String(e.key || "").toLowerCase();
+    var code = String(e.code || "").toLowerCase();
+
+    // F12 / DevTools
+    if (e.key === "F12" || code === "f12") {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    // Ctrl+Shift+I / J / C = DevTools
+    if (e.ctrlKey && e.shiftKey && (key === "i" || key === "j" || key === "c")) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    // Ctrl+U = View Source
+    if (e.ctrlKey && key === "u") {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    // Ctrl+S = Save page (casual deterrent)
+    if (e.ctrlKey && key === "s") {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+  }, { capture: true });
+
+  // Discourage text/image selection on ordinary page content while keeping
+  // inputs/search fields usable.
+  var style = document.createElement("style");
+  style.textContent = `
+    body, body * {
+      -webkit-user-select: none !important;
+      user-select: none !important;
+      -webkit-touch-callout: none !important;
+    }
+    input, textarea, select, [contenteditable="true"] {
+      -webkit-user-select: text !important;
+      user-select: text !important;
+      -webkit-touch-callout: default !important;
+    }
+    img, video {
+      -webkit-user-drag: none !important;
+      user-drag: none !important;
+    }
+  `;
+  (document.head || document.documentElement).appendChild(style);
+
+  // Keep the deterrent active if another script replaces the context menu handler.
+  window.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+  }, true);
+})();
+</script>
+
+</body></html>
