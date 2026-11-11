@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "movieId": 180,
+    "title": "Toaster - Best Scene",
+    "video": "https://ia600603.us.archive.org/19/items/clideo_editor_264c4b4dcbb74bc2b7a135959ffb7e84/clideo_editor_264c4b4dcbb74bc2b7a135959ffb7e84.mp4",
+    "caption": "Watch this amazing scene!",
+    "poster": ""
+  },
+  {
+    "movieId": 179,
+    "title": "Ramayana - Action Scene",
+    "video": "https://your-video-host.com/short2.mp4",
+    "caption": "Discover Ramayana on NIGHTFLIX",
+    "poster": "https://your-image-host.com/ramayana.jpg"
+  }
+]
