@@ -1,5 +1,61 @@
 [
   {
+    "title": "Student of the Year: After Dark",
+    "year": 2026,
+    "genre": "",
+    "poster": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQCyMofDl4x2YLY3RQpSwBYwqXYNyckJksevm6vZWtiw&s=10",
+    "description": "Horror darkness",
+    "contentType": "webseries",
+    "watch": "",
+    "download": "",
+    "photos": [],
+    "episodes": [
+      {
+        "episode": 1,
+        "title": "",
+        "watch": "https://ia600902.us.archive.org/4/items/mcncmx/s1.mp4",
+        "download": ""
+      },
+      {
+        "episode": 2,
+        "title": "",
+        "watch": "https://ia903206.us.archive.org/34/items/xzczxcz/s2.mp4",
+        "download": ""
+      },
+      {
+        "episode": 3,
+        "title": "",
+        "watch": "https://ia601009.us.archive.org/14/items/xzczxcz1/s3.mp4",
+        "download": ""
+      },
+      {
+        "episode": 4,
+        "title": "",
+        "watch": "https://ia601808.us.archive.org/35/items/mcncmc/s4.mp4",
+        "download": ""
+      },
+      {
+        "episode": 5,
+        "title": "",
+        "watch": "https://ia601603.us.archive.org/0/items/ncnhfncjd/s5.mp4",
+        "download": ""
+      },
+      {
+        "episode": 6,
+        "title": "",
+        "watch": "https://ia600409.us.archive.org/2/items/mxmkxl/s6.mp4",
+        "download": ""
+      }
+    ],
+    "universe": "100cr",
+    "rating": 9,
+    "status": "",
+    "popular": false,
+    "isNew": false,
+    "addedAt": "2026-11-14T14:15:51.031Z",
+    "id": 183
+  },
+  {
     "id": 182,
     "title": "Scene(telugu)",
     "year": 2026,
