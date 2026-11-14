@@ -35,7 +35,7 @@ input:focus,textarea:focus{border-color:#e50914}form button{width:100%;margin-to
 <div class="status hidden" id="status"></div><div class="list" id="items"></div>
 </section></main>
 <script>
-const API_BASE = "SET_CLOUDFLARE_WORKER_URL";
+const API_BASE = "https://nightflix-admin-api.gith3620.workers.dev";
 let password="", mode="movies", movies=[], shorts=[];
 const $=id=>document.getElementById(id);
 function message(el,msg,err=false){el.textContent=msg;el.classList.remove("hidden");el.style.border=err?"1px solid #e50914":""}
