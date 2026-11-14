@@ -1,76 +1,57 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta name="theme-color" content="#080a0f"><title>NIGHTFLIX Admin</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#080a0f;color:#f4f6fa;font:15px Inter,Arial,sans-serif;padding:20px}
-main{max-width:760px;margin:30px auto}.brand{font-size:24px;font-weight:900;letter-spacing:1px}.brand span{color:#e50914}
-.panel{margin-top:22px;background:#111720;border:1px solid #293241;border-radius:16px;padding:22px;box-shadow:0 18px 50px #0006}
-h1{font-size:22px;margin:0 0 8px}p,.muted{color:#9aa5b5;line-height:1.5}.tabs{display:flex;gap:8px;margin:18px 0;flex-wrap:wrap}
-button{cursor:pointer;border:0;border-radius:10px;padding:13px 16px;background:#e50914;color:white;font-weight:800}
-button.secondary{background:#202a38;color:#e8edf5}.tabs button{flex:1;min-width:110px}
-label{display:block;font-size:13px;font-weight:700;margin:15px 0 7px}
-input,textarea{width:100%;background:#090e15;border:1px solid #344052;color:white;border-radius:10px;padding:14px;font:inherit;outline:none}
-input:focus,textarea:focus{border-color:#e50914}form button{width:100%;margin-top:20px;min-height:48px}
-.hidden{display:none!important}.status{margin-top:14px;padding:12px;border-radius:9px;background:#1a2431;color:#dce5f1;overflow-wrap:anywhere}
-.small{font-size:12px}.list{display:grid;gap:10px;margin-top:18px}.item{display:flex;gap:12px;align-items:center;padding:12px;background:#0b1119;border:1px solid #293241;border-radius:10px}.item img{width:52px;height:72px;object-fit:cover;border-radius:6px;background:#202a38}.item div{min-width:0;flex:1}.item strong{display:block;overflow-wrap:anywhere}.item button{padding:8px 10px;background:#263344}
-@media(max-width:520px){body{padding:12px}.panel{padding:16px}.tabs button{min-width:0;padding:12px 8px}}
+*{box-sizing:border-box}body{margin:0;background:#080a0f;color:#f4f6fa;font:15px Inter,Arial,sans-serif;padding:16px}main{max-width:900px;margin:18px auto}.brand{font-size:24px;font-weight:900;letter-spacing:1px}.brand span{color:#e50914}.panel{margin-top:18px;background:#111720;border:1px solid #293241;border-radius:16px;padding:20px;box-shadow:0 18px 50px #0006}h1{font-size:22px;margin:0 0 8px}h2{font-size:19px;margin:8px 0 14px}p,.muted{color:#9aa5b5;line-height:1.5}.tabs{display:flex;gap:8px;margin:18px 0;flex-wrap:wrap}button{cursor:pointer;border:0;border-radius:10px;padding:12px 15px;background:#e50914;color:white;font-weight:800}button.secondary{background:#202a38;color:#e8edf5}.tabs button{flex:1;min-width:110px}label{display:block;font-size:13px;font-weight:700;margin:13px 0 7px}input,textarea,select{width:100%;background:#090e15;border:1px solid #344052;color:white;border-radius:10px;padding:13px;font:inherit;outline:none}input:focus,textarea:focus,select:focus{border-color:#e50914}textarea{resize:vertical;min-height:84px}form button{width:100%;margin-top:18px;min-height:48px}.hidden{display:none!important}.status{margin-top:14px;padding:12px;border-radius:9px;background:#1a2431;color:#dce5f1;overflow-wrap:anywhere}.small{font-size:12px}.list{display:grid;gap:10px;margin-top:18px}.item{display:flex;gap:12px;align-items:center;padding:12px;background:#0b1119;border:1px solid #293241;border-radius:10px}.item img{width:52px;height:72px;object-fit:cover;border-radius:6px;background:#202a38}.item div{min-width:0;flex:1}.item strong{display:block;overflow-wrap:anywhere}.item button{padding:8px 10px;background:#263344}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}.checkrow{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px}.checkrow label{display:flex;align-items:center;gap:8px;margin:0}.checkrow input{width:auto}.hint{font-size:12px;color:#9aa5b5;margin-top:5px}.form-actions{display:flex;gap:10px}.form-actions button{flex:1}@media(max-width:600px){body{padding:10px}.panel{padding:14px}.grid{grid-template-columns:1fr}.item{flex-wrap:wrap}.item div{min-width:130px}.item button{flex:1}.form-actions{flex-direction:column}}
 </style></head><body><main>
 <div class="brand">NIGHT<span>FLIX</span> <span style="color:#9aa5b5;font-size:12px">ADMIN</span></div>
-<section class="panel" id="loginPanel"><h1>Admin login</h1><p>Sign in to manage NIGHTFLIX catalogue.</p>
-<label>Admin password</label><input id="password" type="password" autocomplete="current-password" placeholder="Enter admin password">
-<button id="loginBtn" style="width:100%;margin-top:16px">Sign in</button><div class="status hidden" id="loginStatus"></div></section>
-<section class="panel hidden" id="adminPanel"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><h1>Content Manager</h1><p class="small">Changes are committed to GitHub.</p></div><button class="secondary" id="logoutBtn">Log out</button></div>
+<section class="panel" id="loginPanel"><h1>Admin login</h1><p>Sign in to manage NIGHTFLIX catalogue.</p><label>Admin password</label><input id="password" type="password" autocomplete="current-password" placeholder="Enter admin password"><button id="loginBtn" style="width:100%;margin-top:16px">Sign in</button><div class="status hidden" id="loginStatus"></div></section>
+<section class="panel hidden" id="adminPanel"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><h1>Content Manager</h1><p class="small">Changes are committed to GitHub automatically.</p></div><button class="secondary" id="logoutBtn">Log out</button></div>
 <div class="tabs"><button id="movieTab">Movies</button><button class="secondary" id="shortTab">Shorts</button></div>
-<form id="movieForm"><h2>Add movie</h2>
-<label>Movie name</label><input id="movieTitle" required maxlength="160" placeholder="Movie title">
-<label>Poster image URL</label><input id="moviePoster" type="url" required placeholder="https://...jpg">
-<label>Movie MP4 URL</label><input id="movieVideo" type="url" required placeholder="https://...mp4">
-<button type="submit">Add movie to GitHub</button></form>
-<form id="shortForm" class="hidden"><h2>Add Short</h2>
-<label>Short title</label><input id="shortTitle" required maxlength="160" placeholder="Short title">
-<label>Poster image URL (optional)</label><input id="shortPoster" type="url" placeholder="https://...jpg">
-<label>Short MP4 URL</label><input id="shortVideo" type="url" required placeholder="https://...mp4">
-<label>Related Movie ID (optional)</label><input id="shortMovieId" type="number" min="1" placeholder="Movie ID">
+<form id="movieForm"><h2 id="movieFormTitle">Add movie</h2><div class="grid">
+<div><label>Movie name *</label><input id="movieTitle" required maxlength="160" placeholder="Movie title"></div>
+<div><label>Release year</label><input id="movieYear" type="number" min="1900" max="2100" placeholder="2026"></div>
+<div><label>Genre</label><input id="movieGenre" placeholder="Action, Drama, Comedy"></div>
+<div><label>Content type</label><select id="movieType"><option value="movie">Movie</option><option value="webseries">Web Series</option><option value="live">Live</option></select></div>
+<div><label>Poster image URL *</label><input id="moviePoster" type="url" required placeholder="https://...jpg"></div>
+<div><label>Movie MP4 / stream URL *</label><input id="movieVideo" type="url" required placeholder="https://...mp4 or stream URL"></div>
+<div><label>Download URL (optional)</label><input id="movieDownload" type="url" placeholder="https://..."></div>
+<div><label>Rating (optional)</label><input id="movieRating" type="number" min="0" max="10" step="0.1" placeholder="8.5"></div>
+<div><label>Status (optional)</label><input id="movieStatus" placeholder="New, Trending, Coming Soon"></div>
+<div><label>Universe / collection (optional)</label><input id="movieUniverse" placeholder="Marvel, DC etc."></div>
+</div>
+<label>Description / Story *</label><textarea id="movieDescription" rows="4" placeholder="Write complete movie details, story, language, cast etc."></textarea>
+<label>Photos URLs (one URL per line, optional)</label><textarea id="moviePhotos" rows="3" placeholder="https://image1.jpg&#10;https://image2.jpg"></textarea>
+<label>Episodes JSON (Web Series only, optional)</label><textarea id="movieEpisodes" rows="4" placeholder='[{"episode":1,"watch":"https://...mp4","download":""}]'></textarea><div class="hint">Episodes must be valid JSON. Leave blank for a movie.</div>
+<div class="checkrow"><label><input id="moviePopular" type="checkbox"> Popular</label><label><input id="movieNew" type="checkbox"> New release</label></div>
+<div class="form-actions"><button type="submit" id="movieSubmit">Add movie to GitHub</button><button type="button" class="secondary hidden" id="movieCancel">Cancel edit</button></div></form>
+<form id="shortForm" class="hidden"><h2 id="shortFormTitle">Add Short</h2>
+<label>Short title / scene name *</label><input id="shortTitle" required maxlength="160" placeholder="e.g. Best action scene">
+<label>Link this Short to a movie *</label><select id="shortMovieId" required><option value="">Select an existing movie</option></select><div class="hint">Select the exact movie from movies.json. This ID connects the Short to its movie detail page.</div>
+<label>Short poster URL (optional)</label><input id="shortPoster" type="url" placeholder="https://...jpg">
+<label>Short MP4 URL *</label><input id="shortVideo" type="url" required placeholder="https://...mp4">
 <label>Caption (optional)</label><textarea id="shortCaption" rows="2" placeholder="Short description"></textarea>
-<button type="submit">Add Short to GitHub</button></form>
+<div class="form-actions"><button type="submit" id="shortSubmit">Add Short to GitHub</button><button type="button" class="secondary hidden" id="shortCancel">Cancel edit</button></div></form>
 <div class="status hidden" id="status"></div><div class="list" id="items"></div>
 </section></main>
 <script>
 const API_BASE = "https://nightflix-admin-api.gith3620.workers.dev";
-let password="", mode="movies", movies=[], shorts=[];
+let password="",mode="movies",movies=[],shorts=[],editingMovieId=null,editingShortIndex=null;
 const $=id=>document.getElementById(id);
-function message(el,msg,err=false){el.textContent=msg;el.classList.remove("hidden");el.style.border=err?"1px solid #e50914":""}
-async function api(path,method="GET",body){
- const r=await fetch(API_BASE+path,{method,headers:{"Content-Type":"application/json","Authorization":"Bearer "+password},body:body?JSON.stringify(body):undefined});
- const data=await r.json().catch(()=>({error:"Invalid server response"}));
- if(!r.ok)throw new Error(data.error||"Request failed ("+r.status+")");
- return data;
-}
-async function refresh(){
- const d=await api("/api/catalog");
- movies=d.movies||[];shorts=d.shorts||[];renderList();
-}
-function renderList(){
- const arr=mode==="movies"?movies:shorts;
- $("items").innerHTML=arr.map((x,i)=>`<div class="item">${x.poster?`<img src="${escapeHtml(x.poster)}" alt="">`:""}<div><strong>${escapeHtml(x.title||"Untitled")}</strong><span class="muted small">ID: ${escapeHtml(x.id??x.movieId??i)}</span></div><button type="button" onclick="editEntry(${i})">Edit</button><button type="button" onclick="deleteEntry(${i})">Delete</button></div>`).join("")||'<p class="muted">No entries yet.</p>';
-}
-async function editEntry(index){
- const arr=mode==="movies"?movies:shorts, x=arr[index]; if(!x)return;
- const title=prompt("Title",x.title||""); if(title===null)return;
- const poster=prompt("Poster URL",x.poster||""); if(poster===null)return;
- const video=prompt(mode==="movies"?"Movie MP4 URL":"Short MP4 URL",mode==="movies"?(x.watch||""):(x.video||"")); if(video===null)return;
- const payload=mode==="movies"?{id:x.id,title,poster,watch:video}:{index,title,poster,video,caption:x.caption||"",movieId:x.movieId||null};
- try{const d=await api("/api/"+mode,"PATCH",payload);message($("status"),"Updated on GitHub. Commit: "+d.commit);await refresh();}catch(e){message($("status"),e.message,true);}
-}
-async function deleteEntry(index){
- if(!confirm("Delete this item from NIGHTFLIX?"))return;
- const x=(mode==="movies"?movies:shorts)[index]; if(!x)return;
- try{const d=await api("/api/"+mode,"DELETE",mode==="movies"?{id:x.id}:{index});message($("status"),"Deleted from GitHub. Commit: "+d.commit);await refresh();}catch(e){message($("status"),e.message,true);}
-}
-function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-$("loginBtn").onclick=async()=>{try{password=$("password").value;await refresh();$("loginPanel").classList.add("hidden");$("adminPanel").classList.remove("hidden");}catch(e){message($("loginStatus"),e.message,true);}};
-$("logoutBtn").onclick=()=>{password="";$("adminPanel").classList.add("hidden");$("loginPanel").classList.remove("hidden");$("password").value="";};
-$("movieTab").onclick=()=>{mode="movies";$("movieForm").classList.remove("hidden");$("shortForm").classList.add("hidden");$("movieTab").classList.remove("secondary");$("shortTab").classList.add("secondary");renderList();};
-$("shortTab").onclick=()=>{mode="shorts";$("shortForm").classList.remove("hidden");$("movieForm").classList.add("hidden");$("shortTab").classList.remove("secondary");$("movieTab").classList.add("secondary");renderList();};
-$("movieForm").onsubmit=async e=>{e.preventDefault();try{const d=await api("/api/movies","POST",{title:$("movieTitle").value.trim(),poster:$("moviePoster").value.trim(),watch:$("movieVideo").value.trim()});$("movieForm").reset();message($("status"),"Movie added. GitHub commit: "+d.commit);await refresh();}catch(e){message($("status"),e.message,true);}};
-$("shortForm").onsubmit=async e=>{e.preventDefault();try{const d=await api("/api/shorts","POST",{title:$("shortTitle").value.trim(),poster:$("shortPoster").value.trim(),video:$("shortVideo").value.trim(),movieId:$("shortMovieId").value?Number($("shortMovieId").value):null,caption:$("shortCaption").value.trim()});$("shortForm").reset();message($("status"),"Short added. GitHub commit: "+d.commit);await refresh();}catch(e){message($("status"),e.message,true);}};
+function message(el,msg,err=false){el.textContent=msg;el.classList.remove("hidden");el.style.border=err?"1px solid #e50914":"1px solid #263c30"}
+async function api(path,method="GET",body){const r=await fetch(API_BASE+path,{method,headers:{"Content-Type":"application/json","Authorization":"Bearer "+password},body:body?JSON.stringify(body):undefined});const data=await r.json().catch(()=>({error:"Invalid server response"}));if(!r.ok)throw new Error(data.error||"Request failed ("+r.status+")");return data;}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+async function refresh(){const d=await api("/api/catalog");movies=d.movies||[];shorts=d.shorts||[];populateMovieSelect();renderList();}
+function populateMovieSelect(selected=""){$("shortMovieId").innerHTML='<option value="">Select an existing movie</option>'+movies.map(m=>`<option value="${esc(m.id)}">${esc(m.title)} (ID: ${esc(m.id)})</option>`).join("");if(selected!=="")$("shortMovieId").value=String(selected);}
+function renderList(){const arr=mode==="movies"?movies:shorts;$ ("items").innerHTML=arr.map((x,i)=>{const linked=mode==="shorts"?movies.find(m=>String(m.id)===String(x.movieId)):null;return `<div class="item">${x.poster?`<img src="${esc(x.poster)}" alt="">`:""}<div><strong>${esc(x.title||"Untitled")}</strong><span class="muted small">${mode==="movies"?`Movie ID: ${esc(x.id)}`:`Linked movie: ${esc(linked?.title||"Not linked")} · ID: ${esc(x.movieId??"—")}`}</span></div><button type="button" onclick="editEntry(${i})">Edit</button><button type="button" onclick="deleteEntry(${i})">Delete</button></div>`}).join("")||'<p class="muted">No entries yet.</p>';}
+function resetMovieForm(){editingMovieId=null;$('movieForm').reset();$('movieFormTitle').textContent='Add movie';$('movieSubmit').textContent='Add movie to GitHub';$('movieCancel').classList.add('hidden');}
+function resetShortForm(){editingShortIndex=null;$('shortForm').reset();$('shortFormTitle').textContent='Add Short';$('shortSubmit').textContent='Add Short to GitHub';$('shortCancel').classList.add('hidden');}
+function editEntry(i){if(mode==='movies'){const x=movies[i];if(!x)return;editingMovieId=x.id;$('movieTitle').value=x.title||'';$('movieYear').value=x.year||'';$('movieGenre').value=x.genre||'';$('movieType').value=x.contentType||'movie';$('moviePoster').value=x.poster||'';$('movieVideo').value=x.watch||'';$('movieDownload').value=x.download||'';$('movieRating').value=x.rating??'';$('movieStatus').value=x.status||'';$('movieUniverse').value=x.universe||'';$('movieDescription').value=x.description||'';$('moviePhotos').value=(x.photos||[]).join('\n');$('movieEpisodes').value=x.episodes?.length?JSON.stringify(x.episodes,null,2):'';$('moviePopular').checked=!!x.popular;$('movieNew').checked=!!x.isNew;$('movieFormTitle').textContent='Edit movie · ID '+x.id;$('movieSubmit').textContent='Save movie changes';$('movieCancel').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});}else{const x=shorts[i];if(!x)return;editingShortIndex=i;$('shortTitle').value=x.title||'';$('shortPoster').value=x.poster||'';$('shortVideo').value=x.video||'';$('shortCaption').value=x.caption||'';populateMovieSelect(x.movieId);$('shortFormTitle').textContent='Edit Short';$('shortSubmit').textContent='Save Short changes';$('shortCancel').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});}}
+async function deleteEntry(i){if(!confirm('Delete this item from NIGHTFLIX?'))return;const x=(mode==='movies'?movies:shorts)[i];try{const d=await api('/api/'+mode,'DELETE',mode==='movies'?{id:x.id}:{index:i});message($('status'),'Deleted from GitHub. Commit: '+d.commit);await refresh();}catch(e){message($('status'),e.message,true);}}
+$('loginBtn').onclick=async()=>{try{password=$('password').value;await refresh();$('loginPanel').classList.add('hidden');$('adminPanel').classList.remove('hidden');}catch(e){message($('loginStatus'),e.message,true);}};
+$('logoutBtn').onclick=()=>{password='';$('adminPanel').classList.add('hidden');$('loginPanel').classList.remove('hidden');$('password').value='';};
+$('movieTab').onclick=()=>{mode='movies';$('movieForm').classList.remove('hidden');$('shortForm').classList.add('hidden');$('movieTab').classList.remove('secondary');$('shortTab').classList.add('secondary');renderList();};
+$('shortTab').onclick=()=>{mode='shorts';$('shortForm').classList.remove('hidden');$('movieForm').classList.add('hidden');$('shortTab').classList.remove('secondary');$('movieTab').classList.add('secondary');renderList();};
+$('movieCancel').onclick=resetMovieForm;$('shortCancel').onclick=resetShortForm;
+$('movieForm').onsubmit=async e=>{e.preventDefault();try{let episodes=[];if($('movieEpisodes').value.trim())episodes=JSON.parse($('movieEpisodes').value);if(!Array.isArray(episodes))throw Error('Episodes JSON must be an array.');const payload={id:editingMovieId,title:$('movieTitle').value.trim(),year:Number($('movieYear').value)||new Date().getFullYear(),genre:$('movieGenre').value.trim(),contentType:$('movieType').value,poster:$('moviePoster').value.trim(),watch:$('movieVideo').value.trim(),download:$('movieDownload').value.trim(),rating:$('movieRating').value===''?null:Number($('movieRating').value),status:$('movieStatus').value.trim(),universe:$('movieUniverse').value.trim(),description:$('movieDescription').value.trim(),photos:$('moviePhotos').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean),episodes,popular:$('moviePopular').checked,isNew:$('movieNew').checked};const wasEditing=editingMovieId!==null;const d=await api('/api/movies',wasEditing?'PATCH':'POST',payload);resetMovieForm();message($('status'),(wasEditing?'Movie updated.':'Movie added.')+' GitHub commit: '+d.commit);await refresh();}catch(e){message($('status'),e.message,true);}};
+$('shortForm').onsubmit=async e=>{e.preventDefault();try{const movieId=Number($('shortMovieId').value);if(!movies.some(m=>Number(m.id)===movieId))throw Error('Please select a movie from the existing movie list.');const payload={title:$('shortTitle').value.trim(),poster:$('shortPoster').value.trim(),video:$('shortVideo').value.trim(),movieId,caption:$('shortCaption').value.trim(),index:editingShortIndex};const wasEditing=editingShortIndex!==null;const d=await api('/api/shorts',wasEditing?'PATCH':'POST',payload);resetShortForm();message($('status'),(wasEditing?'Short updated.':'Short added.')+' GitHub commit: '+d.commit);await refresh();}catch(e){message($('status'),e.message,true);}};
 </script></body></html>

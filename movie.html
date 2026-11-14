@@ -1518,6 +1518,11 @@ function showMovie(movie){
 
           }
 
+          ${movie.rating !== undefined && movie.rating !== null && movie.rating !== "" ? `<span class="tag">★ ${escapeHtml(movie.rating)}/10</span>` : ""}
+          ${movie.universe ? `<span class="tag">${escapeHtml(movie.universe)}</span>` : ""}
+          ${movie.popular ? `<span class="tag">POPULAR</span>` : ""}
+          ${movie.isNew ? `<span class="tag">NEW</span>` : ""}
+
 
         </div>
 
