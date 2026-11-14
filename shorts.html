@@ -9,20 +9,20 @@
 <script>
 'use strict';
 const feed=document.getElementById('feed'),progress=document.getElementById('progress');
-let shorts=[],movies=[],current=0,muted=false,startX=0,startY=0,startTime=0,progressFrame=null,audioNeedsGesture=false,transitionBusy=false;
+let shorts=[],movies=[],current=0,muted=true,startX=0,startY=0,startTime=0,progressFrame=null,audioNeedsGesture=false,transitionBusy=false;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function movieFor(id){return movies.find(m=>String(m.id)===String(id));}
 function movieUrl(item){return `movie.html?id=${encodeURIComponent(item.movieId)}`;}
 function render(direction="down"){
  if(!shorts.length){feed.innerHTML='<div class="empty"><div><h2>No Shorts Yet</h2><p>Add licensed short-video URLs in <b>shorts.json</b> to start the feed.<br>Swipe down for the next short · Swipe left to open movie details.</p><a href="index.html">Back to NIGHTFLIX</a></div></div>';return;}
  const item=shorts[current],movie=movieFor(item.movieId)||{},poster=item.poster||movie.poster||'';
- feed.innerHTML=`<section class="short ${direction==='up'?'enter-up':'enter-down'}" id="activeShort">${poster?`<img class="poster-bg" src="${esc(poster)}" alt="">`:''}<video id="shortVideo" src="${esc(item.video)}" playsinline webkit-playsinline autoplay loop preload="auto" ${poster?`poster="${esc(poster)}"`:''}></video><div class="meta"><span class="tag">NIGHTFLIX SHORTS</span><h2>${esc(item.title||movie.title||'Movie Short')}</h2><p>${esc(item.caption||movie.description||'Discover this title on NIGHTFLIX.')}</p></div><div class="side"><div><button class="detail-btn" id="openMovie" aria-label="Open movie">↗</button><small>Movie</small></div></div><div class="sound-tip" id="soundTip">${muted?'🔇':'🔊'}</div><div class="play-tip" id="playTip">▶</div><button class="audio-prompt" id="audioPrompt" ${audioNeedsGesture?'':'hidden'}>🔊 Tap to enable sound</button></section>`;
+ feed.innerHTML=`<section class="short ${direction==='up'?'enter-up':'enter-down'}" id="activeShort">${poster?`<img class="poster-bg" src="${esc(poster)}" alt="">`:''}<video id="shortVideo" src="${esc(item.video)}" playsinline webkit-playsinline autoplay loop preload="auto" ${poster?`poster="${esc(poster)}"`:''}></video><div class="meta"><span class="tag">NIGHTFLIX SHORTS</span><h2>${esc(item.title||movie.title||'Movie Short')}</h2><p>${esc(item.caption||movie.description||'Discover this title on NIGHTFLIX.')}</p></div><div class="side"><div><button class="detail-btn" id="openMovie" aria-label="Open movie">↗</button><small>Movie</small></div></div><div class="sound-tip" id="soundTip">${muted?'MUTED':'SOUND'}</div><div class="play-tip" id="playTip">PLAY</div><button class="audio-prompt" id="audioPrompt" ${audioNeedsGesture?'':'hidden'}>ENABLE SOUND</button></section>`;
  const video=document.getElementById('shortVideo');video.muted=muted;video.play().then(()=>{audioNeedsGesture=false;syncSoundUI();}).catch(()=>{muted=true;audioNeedsGesture=true;video.muted=true;video.play().catch(()=>{});const prompt=document.getElementById('audioPrompt');if(prompt)prompt.hidden=false;syncSoundUI();});
  video.addEventListener('click',()=>{if(suppressTap){suppressTap=false;return;}togglePlayback();});
  document.getElementById('audioPrompt').onclick=(e)=>{e.stopPropagation();enableSound();};
  document.getElementById('openMovie').onclick=(e)=>{e.stopPropagation();location.href=movieUrl(item);};
- document.getElementById('nextBtn').onclick=(e)=>{e.stopPropagation();next();};
- document.getElementById('muteBtn').onclick=(e)=>{e.stopPropagation();toggleSound();};
+ 
+ 
  video.addEventListener('timeupdate',()=>{if(video.duration)progress.style.width=(video.currentTime/video.duration*100)+'%'});
  video.addEventListener('ended',next);
  progress.style.width='0%';
@@ -31,9 +31,9 @@ function next(){if(!shorts.length||transitionBusy)return;transitionBusy=true;cur
 function previous(){if(!shorts.length||transitionBusy)return;transitionBusy=true;current=(current-1+shorts.length)%shorts.length;render('up');setTimeout(()=>transitionBusy=false,360);}
 function syncSoundUI(){}
 function showTip(el,text){if(!el)return;el.textContent=text;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),550);}
-function enableSound(){const v=document.getElementById('shortVideo');if(!v)return;muted=false;v.muted=false;v.volume=1;audioNeedsGesture=false;const prompt=document.getElementById('audioPrompt');if(prompt)prompt.hidden=true;v.play().catch(()=>{muted=true;v.muted=true;audioNeedsGesture=true;if(prompt)prompt.hidden=false;});syncSoundUI();showTip(document.getElementById('soundTip'),'🔊');}
-function toggleSound(){const v=document.getElementById('shortVideo');if(!v)return;if(muted){enableSound();return;}muted=true;v.muted=true;syncSoundUI();showTip(document.getElementById('soundTip'),'🔇');}
-function togglePlayback(){const v=document.getElementById('shortVideo');if(!v)return;if(audioNeedsGesture||muted){enableSound();return;}if(v.paused){v.play().catch(()=>{});showTip(document.getElementById('playTip'),'▶');}else{v.pause();showTip(document.getElementById('playTip'),'Ⅱ');}}
+function enableSound(){const v=document.getElementById('shortVideo');if(!v)return;muted=false;v.muted=false;v.volume=1;audioNeedsGesture=false;const prompt=document.getElementById('audioPrompt');if(prompt)prompt.hidden=true;v.play().catch(()=>{muted=true;v.muted=true;audioNeedsGesture=true;if(prompt)prompt.hidden=false;});syncSoundUI();showTip(document.getElementById('soundTip'),'SOUND ON');}
+function toggleSound(){const v=document.getElementById('shortVideo');if(!v)return;if(muted){enableSound();return;}muted=true;v.muted=true;syncSoundUI();showTip(document.getElementById('soundTip'),'SOUND OFF');}
+function togglePlayback(){const v=document.getElementById('shortVideo');if(!v)return;if(audioNeedsGesture||muted){enableSound();return;}if(v.paused){v.play().catch(()=>{});showTip(document.getElementById('playTip'),'PLAY');}else{v.pause();showTip(document.getElementById('playTip'),'PAUSE');}}
 feed.addEventListener('touchstart',e=>{const t=e.changedTouches[0];startX=t.clientX;startY=t.clientY;startTime=Date.now()},{passive:true});
 feed.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-startX,dy=t.clientY-startY;if(Math.max(Math.abs(dx),Math.abs(dy))<45)return;suppressTap=true;if(Math.abs(dx)>Math.abs(dy)){if(dx<0&&shorts[current])location.href=movieUrl(shorts[current]);else if(dx>0)previous();}else{if(dy>0)next();else previous();}},{passive:true});
 let suppressTap=false;feed.addEventListener('touchend',()=>{suppressTap=false;},{passive:true});

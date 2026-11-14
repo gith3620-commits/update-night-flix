@@ -1226,6 +1226,24 @@ body{padding-bottom:92px}
 @media(min-width:900px){.quick-nav{bottom:14px;border:1px solid rgba(255,255,255,.12);border-radius:18px}.quick-nav .quick-active:before{top:-11px}}
 @media(max-width:370px){.quick-nav{padding-left:5px;padding-right:5px}.quick-nav a,.quick-nav button{font-size:10px}.quick-nav .q-icon{font-size:20px}}
 
+
+/* NIGHTFLIX mobile + TV usability */
+.nf-tv-focus, a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+  outline:3px solid #ff2638 !important; outline-offset:3px !important;
+}
+@media(max-width:760px){
+  .nav-right{gap:7px}
+  .search-wrap.mobile-open{display:block!important;position:absolute;top:calc(100% + 6px);left:12px;right:12px;width:auto;z-index:150}
+  .search-wrap.mobile-open input{width:100%;min-height:46px}
+  .icon-btn{min-width:44px;min-height:44px}
+  .menu-btn{min-width:44px;min-height:44px}
+  .navlinks{max-height:75vh;overflow:auto}
+  .quick-nav a,.quick-nav button{min-height:48px}
+}
+@media(min-width:761px) and (max-width:1100px){
+  .search-wrap input{width:min(24vw,240px)}
+}
+
 </style> </head><body><header><div class="container nav"><button class="menu-btn" id="menuBtn" aria-label="Open menu" > ☰ </button><a class="logo" href="#home"> NIGHT<span>FLIX</span></a><nav class="navlinks" id="navlinks"><a class="active" href="#home"> Home </a><a href="shorts.html"> Shorts </a><a href="#movies"> Movies & Series </a><a href="#genres"> Genres </a><a class="live-nav" href="live.html"><span class="live-nav-dot"></span> LIVE TV</a><a href="marvel.html"> Marvel Universe </a><a href="#about"> About </a><a class="request-link" href="movie-request.html"> Movie Request </a></nav><div class="nav-right"><div class="search-wrap"><input id="search" type="search" placeholder="Search movies & series..." aria-label="Search movies and web series" ><span class="search-icon"> ⌕ </span></div><button class="icon-btn" id="topSearch" title="Focus search" > ⌕ </button></div></div></header><main class="container" id="movies" >
 <section class="shorts-launch" id="home" aria-label="NIGHTFLIX Shorts">
   <div class="shorts-launch-copy"><span class="shorts-eyebrow">DISCOVER IN SECONDS</span><h1>Movie <span>Shorts</span></h1><p>Watch quick scenes, discover something new, then open its movie page.</p></div>
@@ -2830,5 +2848,48 @@ aclib.runPop({
   <a href="#movies-grid" aria-label="Movies"><span class="q-icon" aria-hidden="true">▣</span><span>Movies</span></a>
   <a href="live.html" aria-label="Live TV"><span class="q-icon" aria-hidden="true">◉</span><span class="live-label"><span class="live-dot" aria-hidden="true"></span>Live TV</span></a>
 </nav>
+
+
+<script id="nf-device-accessibility">
+(() => {
+  const search = document.getElementById('search');
+  const searchWrap = document.querySelector('.search-wrap');
+  const searchBtn = document.getElementById('topSearch');
+  const menuBtn = document.getElementById('menuBtn');
+  const nav = document.getElementById('navlinks');
+
+  if (searchBtn && search && searchWrap) {
+    searchBtn.addEventListener('click', () => {
+      if (matchMedia('(max-width: 500px)').matches) {
+        searchWrap.classList.toggle('mobile-open');
+      }
+      search.focus();
+    });
+  }
+  if (menuBtn && nav) {
+    menuBtn.addEventListener('click', () => {
+      const opened = nav.classList.toggle('open');
+      menuBtn.setAttribute('aria-expanded', String(opened));
+    });
+  }
+
+  // TV remotes commonly send arrows, Enter/OK, Backspace and Escape.
+  const focusables = () => [...document.querySelectorAll(
+    'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex="0"]'
+  )].filter(el => el.getClientRects().length && !el.closest('[hidden]'));
+  document.addEventListener('keydown', e => {
+    if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)) {
+      const items = focusables();
+      const current = document.activeElement;
+      const idx = items.indexOf(current);
+      if (idx >= 0) {
+        const delta = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1 : -1;
+        const next = items[(idx + delta + items.length) % items.length];
+        if (next) { e.preventDefault(); next.focus(); next.scrollIntoView({block:'nearest',inline:'nearest'}); }
+      }
+    }
+  });
+})();
+</script>
 
 </body></html>

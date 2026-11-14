@@ -40,6 +40,10 @@ button:focus{outline:3px solid #ffcc00;outline-offset:2px}
   pointer-events:none;
   transform:translateX(-50%) translateY(12px);
 }
+
+.control-btn{min-width:74px;min-height:54px;padding:10px 12px;border-radius:10px;font-size:12px;font-weight:800;letter-spacing:.04em}
+.control-btn:focus-visible,#retry:focus-visible{outline:3px solid #e50914;outline-offset:4px}
+@media(max-width:700px){.control-btn{min-width:68px;min-height:50px}}
 </style>
 </head>
 <body>
@@ -55,9 +59,9 @@ button:focus{outline:3px solid #ffcc00;outline-offset:2px}
     <button id="retry" tabindex="0">Retry</button>
   </div>
   <div id="controls">
-    <button id="playBtn" class="control-btn" tabindex="0" aria-label="Play or Pause">▶</button>
-    <button id="muteBtn" class="control-btn" tabindex="0" aria-label="Mute">🔊</button>
-    <button id="fullscreenBtn" class="control-btn" tabindex="0" aria-label="Fullscreen">⛶</button>
+    <button id="playBtn" class="control-btn" tabindex="0" aria-label="Play or Pause">PLAY</button>
+    <button id="muteBtn" class="control-btn" tabindex="0" aria-label="Toggle sound">SOUND ON</button>
+    <button id="fullscreenBtn" class="control-btn" tabindex="0" aria-label="Fullscreen">FULLSCREEN</button>
   </div>
 </div>
 
@@ -356,5 +360,27 @@ video.addEventListener("playing", () => { hideLoading(); hideError(); });
 loadStream();
 </script>
 
+
+<script id="nf-remote-keys">
+(() => {
+ const video=document.getElementById('video');
+ const play=document.getElementById('playBtn');
+ const mute=document.getElementById('muteBtn');
+ const full=document.getElementById('fullscreenBtn');
+ const retry=document.getElementById('retry');
+ document.addEventListener('keydown',e=>{
+   if(e.key==='Enter' && document.activeElement===play){e.preventDefault();play.click();}
+   else if(e.key==='Enter' && document.activeElement===mute){e.preventDefault();mute.click();}
+   else if(e.key==='Enter' && document.activeElement===full){e.preventDefault();full.click();}
+   else if(e.key===' '){e.preventDefault();play?.click();}
+   else if(e.key.toLowerCase()==='m'){mute?.click();}
+   else if(e.key.toLowerCase()==='f'){full?.click();}
+   else if(e.key==='ArrowLeft'){video.currentTime=Math.max(0,video.currentTime-10);}
+   else if(e.key==='ArrowRight' && Number.isFinite(video.duration)){video.currentTime=Math.min(video.duration,video.currentTime+10);}
+   else if(e.key==='Escape' && document.fullscreenElement){document.exitFullscreen?.();}
+ });
+ [play,mute,full,retry].forEach(el=>{if(el)el.tabIndex=0;});
+})();
+</script>
 </body>
 </html>

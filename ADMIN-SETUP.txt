@@ -1,0 +1,29 @@
+NIGHTFLIX UPDATE — INSTALLATION
+
+Included:
+- admin.html: mobile-friendly admin form (movie name, poster URL, MP4 URL; Shorts form too)
+- cloudflare-worker.js: secure GitHub API bridge
+- updated index.html: mobile search/menu handling + basic TV remote keyboard navigation
+- updated player.html and live-player.html: professional text controls, keyboard remote shortcuts
+- updated shorts.html: removes stale button handlers and replaces emoji overlays with labels
+
+IMPORTANT:
+1. GitHub Pages cannot securely commit to GitHub directly from browser JavaScript.
+2. Deploy cloudflare-worker.js as a Cloudflare Worker.
+3. Set Worker secrets:
+   ADMIN_PASSWORD = choose a strong private password
+   GITHUB_TOKEN = fine-grained GitHub token with Contents: Read and write access
+4. Set Worker variables:
+   GITHUB_OWNER = gith3620-commits
+   GITHUB_REPO = update-night-flix
+   GITHUB_BRANCH = main (change if your default branch differs)
+   ALLOWED_ORIGIN = exact GitHub Pages origin, e.g. https://gith3620-commits.github.io
+5. In admin.html, replace SET_CLOUDFLARE_WORKER_URL with the deployed Worker URL, e.g. https://nightflix-admin.<account>.workers.dev
+6. Commit all project files to the same GitHub repository.
+7. Open /admin.html on your phone. Sign in with ADMIN_PASSWORD.
+
+GitHub token must NEVER be placed in admin.html or any public repository file.
+The Worker currently supports ADD for movies and Shorts. The admin list shows current entries.
+Video URLs must be direct HTTPS MP4 links that allow browser playback (CORS/range support recommended).
+Poster URL must be a direct HTTPS image URL.
+Movies/Shorts should only be added if you own or are licensed to distribute the media.
